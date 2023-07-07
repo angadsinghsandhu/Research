@@ -1,0 +1,184 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\title{Chatbot Kannada}
+\author{Angad, Isha , Ashish, Musica }
+\date{April 2022}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Intelligent Chatbots serve as virtual assistants to several platforms, in this paper we introduce a chatbot \textit{Madhyavarthi} to assist farmers and vendors by eliminating the need of middleman. 
+
+\section{Literature Survey}
+%Isha Ashish
+
+\section{Methodology}
+% Angad
+% \textbf{https://www.scribbr.com/dissertation/methodology/}
+
+\subsection{Methodological approach}
+\begin{itemize}
+\item To incorporate Intelligent chatbot  with reading the table or data present in webpage.
+\end{itemize}
+
+
+In the present study, we aimed to create a chatbot that could be used as a bridge between the various native-communities and the internet, by providing chatbots that may be able to understand and comprehend the languages and methods of conversations that they may be familiar with. By providing chatbots trained in native indic languages, these communities might be able to access and use government or commercial websites that maybe in a different language.
+
+To approach a problem such as this, there exists a myriad of alternatives in terms of the implementations of chatbots. Two common techniques being \textbf{Simple chatbots}, that operate on predefined questions and answers and \textbf{Intelligent chatbots}, which utilize the learning capabilities of AI models to generate replies or respond with consideration of sentiment and intent. Hence, in the present study we try to create and implement \textbf{Hybrid chatbots}, that implement the strong points of both the fore mentioned models.
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{Methodology Flowchart.png}
+    \caption{Caption}
+    \label{fig:my_label}
+\end{figure}
+
+\textbf{ADD METHODOLOGY FLOWCHART IMAGE}
+
+\subsection{Data Collection}
+The first step of the data collection process used in the present study was to retrieve or a set of fixed questions and answers as used by classical chatbots. After such a set was created, all sets of questions and answers were distributed within a set number of classes, for our implementation these were a set of 7 classes (greeting, goodbye, age, name, shop, hours, crop) all of them in Kannada. 
+
+After all such classes were created, the data was put into a JSON file, for larger implementations of the current proof of concept a relational database can be used as well. The said JSON file is called our \textbf{\textit{Intents}} file, harbouring all our chatbot data. the intents file is a list of dictionaries with 3 attributes (tag, patterns and responses). The '\textit{tag}' mentioning the class of questions and responses stored within this dictionary. The '\textit{patterns}' field is an array of all question patterns that fall into this class. Similar to patterns, '{responses}' is an array as well containing all the valid answers to the questions inside patterns.
+
+\textbf{ADD IMAGE}
+
+Crop Data File
+While all classes function in similar fashion, one exception is the '\textit{crop}' class, where if this class is predicted, this class relates to when a farmer or concerned person asks the bot for information on certain crop (i.e. their minimum and maximum selling price at certain a farmer's markets or mandis). Whenever, the '\textit{crop}' class is identified, we match a possible crop name in the sentence to our database of crop information. This information is present in a JSON file as well as a dictionary with keys of possible crop names, which are further dictionaries with keys such as, \textit{\textbf{State}}, \textbf{\textit{District}} and \textbf{\textit{Market}} name of mandis with the names of the \textbf{\textit{Commodity}} and its \textbf{\textit{Variety}} along with the \textbf{\textit{minimum}}, \textbf{\textit{maximum}} and \textbf{\textit{modal}} price of the fore mentioned commodity.
+
+\textbf{ADD IMAGE}
+\subsection{Analysis}
+The first step to the process used in the present study was to create intermediate data structures that would be used later in training. These structures include three array : \textbf{words}, \textbf{classes} and \textbf{docs}. Where words is a list of all patterns broken down into individual words and appended together, classes is a list of all our 7 class names and docs is a list of tuples with individual patterns and their corresponding classes.
+
+Before training we represent words as numeric data using bag of words, where the \textbf{\textit{training}} list, is an array of arrays, wherein each element is an array of the one-hot encoding of the input patterns and the output class. This array is shuffled and then split into the \textbf{\textit{input}} and \textbf{\textit{output}} arrays each representing their corresponding list of vectors.
+
+This vectored data was loaded into a Neural Network build using Tensorflow and Keras. The sequential model, having two Dense layers of 128 and 64 nodes respectively and dropout between each layer finally outputs into a Softmax layer. This model was optimized using Stochastic Gradient Descent on the Categorical Cross-Entropy loss function. 
+
+\textbf{ADD TRAINING IMAGE IMAGE}
+
+Even though the trained Neural Network provides great results in classification, it still lacks in providing accurate results, as the model often overfits on the small amount of input data. Hence, to harness attention based training in the present study, \textbf{\textit{Transformers}} provided by the spaCy library are utilized to gain even better results.
+
+Similar to our initial approach we create intermediate data to be used in training, whereas we created multiple lists of words and classes, we simple create a dataframe with columns of \textbf{\textit{text}} and the corresponding \textbf{\textit{class}} that text belongs to. While creating this structure we also remove all stopwords from our text before storing. This dataframe is shuffled and then split into \textit{Training} and \textit{Validation} Sets with a 70\% split percentage. 
+
+Finally we begin processing the input data, by creating a spaCy pipeline. As spaCy does not have a language library for Kannada, we load the "en\_core\_web\_sm" english library as our placeholder. The data is passed through our pipe and iterated where we create one-hot encoding of our document category for each sample. Eventually, this document is returned and saved as binary file to be trained. 
+
+Penultimately, we create our configuration file for our transformer, where we use spaCy's built-in Kannada language support using the text categorization (i.e. textcat) component, optimized for accuracy and trained on a local GPU. Finally, the transformer is executed using the "config" file as well as the training and validation binary data
+
+\textbf{ADD IMAGE}
+
+\subsection{Evaluation}
+
+After the model is trained and ready to use, we implement the chatbot. We scan the input sentence from the user and pass it through the model to generate a list of our classification and corresponding probability. This list is sorted in decreasing order from higher probability to lower. All classifications below a certain threshold probability are disregarded.
+
+Now that we have our classifications, we consider the class with the highest probability. If the fore mentioned class is \textbf{\textit{'crop'}}, two bag of words are created, the first bag is the input sentence itself and the second bag contains the names of all the crops in our crop dataset. By taking the intersection of these bags we get a list of all the mentioned crops in the input sentence. Those common crops are displayed back as the result. If the classification is anything other than \textbf{\textit{"crop"}} then we query our \textbf{intents} file to get the responses to our predicted class. Finally, we return one of the responses to the predicted class as the answer to our input sentence.
+
+\section{Results and Discussion}
+%Angad
+\subsection{Multi-Layer Feed-Forward Network}
+
+For the vanilla neural network used in this paper, we generate the following results:
+
+\begin{center}
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Metric} &  \textbf{Value}\\
+    \hline
+    \hline
+    Loss &  0.587\\
+    \hline
+    Accuracy & 0.8213\\
+    \hline
+    Precision & 0.900\\
+    \hline
+    Recall & 0.619\\
+    \hline
+    F1 Score & 0.7335\\
+    \hline
+    Mean Absolute Error & 0.097\\
+    \hline
+\end{tabular}
+\end{center}
+
+
+
+
+\textbf{INSERT TABLE}
+
+\textbf{INSERT IMAGE OF NEURAL NETWORK}
+
+
+\subsection{Transformer}
+
+For the transformer used in this paper we generate the following results:
+
+\begin{center}
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Class} &  \textbf{Accuracy}\\
+    \hline
+    \hline
+    Greetings &  1.0\\
+    \hline
+    Goodbye & 0.9923\\
+    \hline
+    Age & 1.0\\
+    \hline
+    Name & 0.9722\\
+    \hline
+    Shop & 0.9629\\
+    \hline
+    Hours & 0.9880\\
+    \hline
+    Crop & 1.0\\
+    \hline
+    \hline
+    \textbf{Average Accuracy} & \textbf{0.9879}\\
+    \hline
+\end{tabular}
+
+\vspace{5 mm}
+
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Metric} &  \textbf{Value}\\
+    \hline
+    \hline
+    Accuracy & 0.9879\\
+    \hline
+    Precision & 0.9437\\
+    \hline
+    Recall & 0.8708\\
+    \hline
+    F1 Score & 0.9057\\
+    \hline
+\end{tabular}
+\end{center}
+
+\textbf{INSERT TABLE}
+
+\textbf{INSERT IMAGE OF Transformer NETWORK}
+
+
+\subsection{Inference}
+
+\begin{center}
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Metric} &  \textbf{Increase (\%)}\\
+    \hline
+    \hline
+    Accuracy & 20.28\\
+    \hline
+    Precision & 4.85\\
+    \hline
+    Recall & 40.67\\
+    \hline
+    F1 Score & 23.47\\
+    \hline
+\end{tabular}
+\end{center}
+
+\section{Conclusion and Future Scope}
+
+\end{document}

@@ -1,0 +1,44 @@
+{
+    "intents": [
+        {
+            "tag": "greetings",
+            "pattern": ["hello", "hey", "hi", "good day", "good morning"],
+            "responses": ["Hello", "What can I do for you?"]
+        },  
+        {
+            "tag": "goodbye",
+            "pattern": ["cya", "see you later", "I'm leaving", "goodbye", "have a good day", "I am leaving", "bye", "see ya"],
+            "responses": ["Goodbye", "Nice to have met you"]
+        },  
+        {
+            "tag": "age",
+            "pattern": ["how old", "how old is florian", "what is your age", "how old are you?", "age?"],
+            "responses": ["My owner is 21 years old!", "21 years!", "21"]
+        },  
+        {
+            "tag": "name",
+            "pattern": ["What is your name", "what should I call you?", "what is your name", "who are you", "can you tell me your name"],
+            "responses": ["You can call me Neural!", "I'm neural", "I'm Neural, The assistant"]
+        },  
+        {
+            "tag": "shop",
+            "pattern": ["I'd like to buy something", "What are your products?", "what do you recommend?", "What are you selling?"],
+            "responses": ["We sell books! Lots of them."]
+        },  
+        {
+            "tag": "hours",
+            "pattern": ["When are you guys open?", "What are your hours", "hours of operation", "price", "value", "mrp"],
+            "responses": ["24/7"]
+        },  
+        {
+            "tag": "crop",
+            "pattern": ["What is the price of maize", "How much is Wheat worth", "selling price of rice", "Where can I fingd must"],
+            "responses": ["[Unavailable]"]
+        },  
+        {
+            "tag": "stocks",
+            "pattern": ["what stocks do I own?", "how are my shares?", "what companies am I invested in?", "What am I doing in stocks"],
+            "responses": ["You own the following shares: ABBV, APPL, FB, NVDA and an ETF of the S&P 500 Index!"]
+        }
+    ]
+}

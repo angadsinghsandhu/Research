@@ -1,0 +1,14 @@
+{
+  "labels":[
+    "greetings",
+    "goodbye",
+    "age",
+    "name",
+    "shop",
+    "hours",
+    "crop",
+    "stocks"
+  ],
+  "threshold":0.5,
+  "positive_label":null
+}

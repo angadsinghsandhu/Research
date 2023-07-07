@@ -1,0 +1,5 @@
+- Writing Custom Optimizer
+
+https://towardsdatascience.com/custom-optimizer-in-tensorflow-d5b41f75644a
+
+https://cloudxlab.com/blog/writing-custom-optimizer-in-tensorflow-and-keras/
