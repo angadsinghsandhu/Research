@@ -1,6 +1,6 @@
 # Reubttal to Review 1
 
-We sincerely appreciate your thorough review of our research paper and your valuable insights into the existing body of work in this domain. 
+We sincerely appreciate your thorough review of our research paper and your valuable insights into the existing body of work in this domain.
 
 First, we would like to address your comments and concerns while elaborating on the unique contributions and methodological innovations proposed. While we acknowledge the significance of the paper you referenced, "Topic Lifecycle on Social Networks: Analyzing the Effects of Semantic Continuity and Social Communities," our work distinguishes itself by introducing several novel methodological advancements that overcome the limitations of existing approaches.
 
