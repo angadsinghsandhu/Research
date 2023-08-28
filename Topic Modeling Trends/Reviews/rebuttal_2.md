@@ -1,4 +1,4 @@
-# Reubttal to Review 2
+# Rebuttal to Review 2
 
 We appreciate your thorough analysis of our research work and the insightful comments you made on the body of knowledge in this domain.
 
@@ -10,11 +10,11 @@ Here, the process **only** requires the end user to:
 2. a single base term.
 3. at least one or more relative terms.
 
-All further steps are handled by the process itself, given the user knows the number of timesteps (per month in our study) on which the trend should be formed.
+All further steps are handled by the process itself, given the user knows the number of timesteps (per month in our study) on which the trend should be formed. We are also in the final stages of creating a webpage to demonstrate this process and it used only the above mentioned parameters.
 
 ## Issue #2
 
-Our paper describes a preliminary set of promising results that can be improved by incorporating more current techniques that utilize attention to give us a finer resolution on embeddings. We specifically mention in our “Future Works” section our intention to advance the system in this regard.
+Our paper describes a *preliminary set of promising results* that can be improved by incorporating more current techniques that utilize attention to give us a finer resolution on embeddings. We specifically mention in our “Future Works” section our intention to advance the system in this regard.
 
 Our “Future Works” section states that the next step to our research is using advanced techniques such as *Transformer-based models* to capture word-level attention to create the embeddings, but **does not** take away from the importance of this study, which will build the ***foundation*** for more *advanced* techniques.
 
@@ -22,17 +22,31 @@ Our “Future Works” section states that the next step to our research is usin
 
 As this is a short paper, we unfortunately had to take away a lot of our examples to fit the space. To make concurrent points on how this method produces concurrent results, we are attaching further case studies to drive our point across.
 
-![Trends of relative term "cdc" with respect to "official"](https://github.com/angadsinghsandhu/Research/blob/main/Topic%20Modeling%20Trends/images/1_example.png)
+![Trends of relative term "cdc" with respect to "unofficial"](https://github.com/angadsinghsandhu/Research/blob/main/Topic%20Modeling%20Trends/images/1_example.png)
 
-[Table 1]
+| Months | Jan'20 | Jun'20 | Dec'20 | Jan'21 | Jun'21 | Dec'21 |
+|--------|--------|--------|--------|--------|--------|--------|
+| CDC    | 0.00   | 0.262  | 0.123  | 0.116  | 0.109  | 0.112  |
 
-As it can be deduced from the data, the term "CDC" starts being considered from June 2020, corresponding with the sharp increase in COVID-19 cases. A comparatively large cosine distance can be observed between "CDC" and "Unofficial", conveying that the organization was held in high regard as an entity to look for guidance and information in such a situation. As time progresses to June and December, the public's trust in the "Media" and government organizations deteriorate with the number of increasing deaths and growth in the anti-vaccination agenda as well as an increased support from pro-vaccination groups. This leads to the variance in cosine distance, hence showcasing the growing distrust in the organization.
+The above trend is created using ***Twitter data*** from `2020` to `2021` (divided in time periods of 4 months) to study the trends of the public discourse around Covid and other issues. Here, the trem `"CDC"` (Center for Disease Control) is our **relative terms** that forms the trends with respect to the term `"Unofficial"` as the **base term**.
 
-[Table 2]
-[use 2_cs_covid.png]
-The following case study is a perfect example to signify the discrepancies observed by quantizing such arbitrary concepts such as trust and formalism of an organization. Even though the terms "Unofficial" and "Trust" may seem different semantically, both of them produce similar trends when in relation to "CDC". This may be attributed to the absence of a general consensus. 
+As it can be deduced from the data, the term `"CDC"` starts being considered from June 2020, corresponding with the sharp increase in COVID-19 cases. A comparatively *large cosine distance* can be observed between `"CDC"` and `"Unofficial"`, conveying that the organization was held in *high regard* as an entity to look for guidance and information in such a situation.
+
+As time progresses to **June and December**, the public's trust in the "Media" and government organizations deteriorate with the number of *increasing deaths* and growth in the *anti-vaccination agenda* as well as an increased support from *pro-vaccination groups*. This leads to the **variance** in cosine distance, hence showcasing the growing distrust in the organization.
+
+![Trend of the terms "CDC", "Fauci" and "experts" through 2020-21 with the base term "Trust"](https://github.com/angadsinghsandhu/Research/blob/main/Topic%20Modeling%20Trends/images/2_cs_covid.png)
+
+| Months  | Jan'20 | Jun'20 | Dec'20 | Jan'21 | Jun'21 | Dec'21 |
+|---------|--------|--------|--------|--------|--------|--------|
+| CDC     | 0.00   | 0.413  | 0.132  | 0.128  | 0.103  | 0.114  |
+| Fauci   | 0.00   | 0.521  | 0.187  | 0.111  | 0.139  | 0.153  |
+| Experts | 0.280  | 0.591  | 0.133  | 0.126  | 0.146  | 0.109  |
+
+The following case study is a perfect example to signify the discrepancies observed by quantizing such arbitrary concepts such as trust and formalism of an organization. Even though the terms "Unofficial" and "Trust" may seem different semantically, both of them produce similar trends when in relation to "CDC". This may be attributed to the absence of a general consensus.
 
 An important fact that can be observed in both cases is the large difference in the values of the terms between June 2020 to December 2020. This corresponds to a greater shift in the political landscape as well as the public opinion. Where one school of thought went from considering CDC from competent to inept, in contrast, another may have started considering the said organization as more trustworthy. But, the COVID-19 case study also displays that all the relative terms (that are closely correlated to each-other) such as CDC, Dr. Anthony Fauci (Chief Medical Advisor to the President of the United States) and Experts all show similar trends.
+
+## Issue #4
 
 We are also specifying how our method performs better than google trends the go-to method for the average person to see how trends are forming.
 
