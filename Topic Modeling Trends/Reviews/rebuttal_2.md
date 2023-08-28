@@ -20,7 +20,7 @@ Our “Future Works” section states that the next step to our research is usin
 
 ## Issue #3
 
-As this is a short paper, we unfortunately had to take away a lot of our examples to fit the space. To make concurrent points on how this method produces concurrent results, we are attaching further case studies to drive our point across.
+As this is a short paper, we unfortunately had to take away a lot of our examples to fit the space. To make concurrent points on how this method produces coinciding results, we are attaching further case studies to drive our point across.
 
 ![Trends of relative term "cdc" with respect to "unofficial"](https://github.com/angadsinghsandhu/Research/blob/main/Topic%20Modeling%20Trends/images/1_example.png)
 
@@ -42,7 +42,7 @@ As time progresses to **June and December**, the public's trust in the "Media" a
 | Fauci   | 0.00   | 0.521  | 0.187  | 0.111  | 0.139  | 0.153  |
 | Experts | 0.280  | 0.591  | 0.133  | 0.126  | 0.146  | 0.109  |
 
-The following case study is a perfect example to signify the discrepancies observed by quantizing such arbitrary concepts such as *trust* and *formalism* of an organization. Even though the terms `"Unofficial"` and `"Trust"` may seem different semantically, both of them produce similar trends (but not exact!! each base word creates new trends for all relative words) when in relation to `"CDC"`. This may be attributed to the absence of a general consensus.
+The following case study is a perfect example to signify the discrepancies observed by quantizing such arbitrary concepts such as *trust* and *formalism* of an organization. Even though the terms `"Unofficial"` and `"Trust"` may seem different semantically, both of them produce similar trends (but not exact! Each base word creates new trends for all relative words) when in relation to `"CDC"`. This may be attributed to the absence of a general consensus.
 
 An important fact that can be observed in both cases is the large difference in the values of the terms between *June 2020 to December 2020*. This corresponds to a greater shift in the political landscape as well as the public opinion. Where one school of thought went from considering CDC from *competent to inept*, in contrast, another may have started considering the said organization as more *trustworthy*. But, the COVID-19 case study also displays that all the relative terms (that are closely correlated to each-other) such as CDC, `Dr. Anthony Fauci` (Chief Medical Advisor to the President of the United States) and `Experts` all show **similar trends**.
 
