@@ -4,7 +4,7 @@ We appreciate your thorough analysis of our research work and the insightful com
 
 ## Issue #1
 
-Here, the process **only** requires the end user to:
+Here, the process **only** requires the end user to mention a few parameters, such as:
 
 1. select the data on which the trend should be formed. (specifying the number of time periods)
 2. a single base term.

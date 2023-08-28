@@ -4,11 +4,13 @@ We value the in-depth examination of our research and the perceptive remarks you
 
 ## Issue #1
 
-First, we would like to address our methodology. Here is a flowchart to make the process proposed in the paper more clear as well as a excerpt on how K-means is applied in this context:
+First, we would like to address our methodology. Here is a **flowchart** to make the process proposed in the paper more clear as well as a excerpt on how K-means is applied in this context:
 
 ![methodology flow](https://github.com/angadsinghsandhu/Research/blob/main/Topic%20Modeling%20Trends/images/methodology_flow.jpg)
 
-In our process, we begin with a corpus of text data. As a preliminary step, we partition this corpus based on distinct time periods to facilitate the temporal aspect of our analysis. With these partitioned datasets, Word2Vec is utilized in constructing separate vector spaces for each time period. This transformation into a vector space enables us to explore similarities and differences among words in different time periods. To unravel semantic relationships, we employ K-means clustering, an algorithm that aids in discerning patterns of similarity. The Gensim library allows all these tools to be used simultaneously, encapsulating the entire process — embedding the words, clustering them using K-means, and allowing us to query for similarity. It is important to note that K-means' role in this process is to allow for similarity analysis between words.
+In our process, we begin with a corpus of text data. As a preliminary step, we partition this corpus based on distinct time periods to facilitate the temporal aspect of our analysis. With these partitioned datasets, `Word2Vec` is utilized in constructing separate **vector spaces** for *each time period*. This transformation into a vector space enables us to explore similarities and differences among words in different time periods.
+
+We employ `Cosine Distance` to show similarity between the relative and base terms in each of the time periods to generate trends. Finally, We use `K-means Clustering` to cross reference if the embediing with similar trends all into similar or dissimilar clusters, hence forming an idea of inter and intra cluster trends.
 
 ## Issue #2
 
