@@ -1,0 +1,53 @@
+{
+  "train_batch_size": 256,
+  "train_micro_batch_size_per_gpu": 64,
+  "gradient_accumulation_steps": 4,
+  "steps_per_print": 250,
+  "optimizer": {
+    "type": "AdamW",
+    "params": {
+      "lr": 0.005,
+      "betas": [0.9, 0.999],
+      "eps": 1e-8,
+      "weight_decay": 3e-7
+    }
+  },
+  "scheduler": {
+    "type": "WarmupDecayLR",
+    "params": {
+      "total_num_steps": 10000,
+      "warmup_min_lr": 0,
+      "warmup_max_lr": 0.001,
+      "warmup_num_steps": 500
+    }
+  },
+  "pipeline_": {
+    "type": "simple",
+    "num_stages": 2,
+    "partition_method": "type:transformer",
+    "pipe_buffers": 4,
+    "schedule": "1f1b"
+  },
+  "zero_optimization": {
+    "stage": 2,
+    "stage3_max_live_parameters" : 1000000000,
+    "stage3_max_reuse_distance" : 1000000000,
+    "allgather_partitions": true,
+    "use_multi_rank_bucket_allreduce": true,
+    "allgather_bucket_size": 500000000,
+    "reduce_scatter": true,
+    "contiguous_gradients" : true,
+    "overlap_comm": true,
+    "reduce_bucket_size": 500000000,
+    "load_from_fp32_weights": false,
+    "sub_group_size" : 1000000000000,
+    "ignore_unused_parameters": true,
+    "round_robin_gradients": true,
+    "zero_hpz_partition_size": 1,
+    "zero_quantized_weights": false,
+    "zero_quantized_nontrainable_weights": false,
+    "zero_quantized_gradients": false,
+    "memory_efficient_linear": true,
+    "override_module_apply": false
+  }
+}
