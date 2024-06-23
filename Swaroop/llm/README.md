@@ -17,6 +17,7 @@ This project is a simple implementation of a simple web server using the `http` 
 1. [Cataract-1K Dataset for Deep-Learning-Assisted Analysis of Cataract Surgery Videos](./reading/Cataract-1K%20Dataset.pdf)
 2. [Hierarchical Video-Language Pretraining for Zero-shot Surgical Phase Recognition](./reading/HecVL.pdf)
 3. [A Survey on Transfer Learning](./reading/MLLM%20Survey.pdf)
+4. <https://github.com/Vision-CAIR/MiniGPT4-video>
 
 DATA:
 
