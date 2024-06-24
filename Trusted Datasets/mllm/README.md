@@ -28,3 +28,4 @@ Pre-Trained Models:
 - MiniCPM: <https://huggingface.co/spaces/openbmb/MiniCPM-Llama3-V-2_5>
 - LLAVA-1.6: <https://llava.hliu.cc/>
 - Uni-MoE: <https://github.com/HITsz-TMG/UMOE-Scaling-Unified-Multimodal-LLMs>
+- MiniGPT-video: <>
