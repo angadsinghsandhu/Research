@@ -10,36 +10,21 @@ from tkinter import filedialog, simpledialog
 drawing = False
 last_point = None
 
-
-# TODO: Add draw annotations
-
-# TODO: test Surface audio signal
-
-# TODO - large
-
-# TODO: test TTS (whisper) on Surface
-
-# TODO: test annotations recorded 240p and recoreded in 1080p, scaled down to 240p
-
-# FIXME: draw annotations on video not working
 # Define the callback function for drawing annotations
 def draw_annotation(event, x, y, flags, param):
     global last_point, drawing, last_frame, play
     if not play:  # Check if the video is paused
         if event == cv2.EVENT_LBUTTONDOWN:
-            print("left button down")
             drawing = True
             last_point = (x, y)
             # frames.append(last_frame.copy())
         elif event == cv2.EVENT_MOUSEMOVE and drawing:
-            print("mouse move")
             cv2.line(last_frame, last_point, (x, y), (0, 255, 0), 1)
             frames.append(last_frame.copy())
             last_point = (x, y)
 
             cv2.imshow(window_name, last_frame)  # Update the display
         elif event == cv2.EVENT_LBUTTONUP:
-            print("left button up")
             drawing = False
             cv2.line(last_frame, last_point, (x, y), (0, 255, 0), 1)
             frames.append(last_frame.copy())
@@ -125,8 +110,7 @@ write(output_audio_path, samplerate, audio_array)
 audio_delay = -1
 # Combine audio and video using FFmpeg
 command = [
-    # 'C:\\Program Files (x86)\\ffmpeg-master-latest-win64-gpl\\bin\\ffmpeg.exe',
-    'C:\\Users\\angad\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg.Essentials_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-7.0.1-essentials_build\\bin\\ffmpeg.exe',
+    'C:\\Program Files (x86)\\ffmpeg-master-latest-win64-gpl\\bin\\ffmpeg.exe',
     '-i', output_video_path,
     '-itsoffset', str(audio_delay),
     '-i', output_audio_path,

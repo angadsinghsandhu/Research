@@ -25,7 +25,7 @@ DATA:
 
 Pre-Trained Models:
 
-- MiniCPM: <https://huggingface.co/spaces/openbmb/MiniCPM-Llama3-V-2_5>
+<!-- - MiniCPM: <https://huggingface.co/spaces/openbmb/MiniCPM-Llama3-V-2_5> -->
 - Uni-MoE: <https://github.com/HITsz-TMG/UMOE-Scaling-Unified-Multimodal-LLMs>
 - MiniGPT-video: <https://github.com/Vision-CAIR/MiniGPT4-video>
 - LLAVA-1.6: <https://llava.hliu.cc/>
