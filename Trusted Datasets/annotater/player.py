@@ -1,20 +1,21 @@
-from tkinter import filedialog, messagebox
-import cv2
-import time
+import cv2, os
 from PIL import Image
 import customtkinter as ctk
 from customtkinter import CTkImage
+from tkinter import messagebox
 from data import Data
 
 
 class VideoPlayer:
-    def __init__(self):
+    def __init__(self, file_path, file_name, out_path):
         # TODO : add audio callback function
         # Video Player Objects
         self.cap = None
 
         # Variables
-        self.file_path, self._data = None, None
+        self.file_path, self.file_name = file_path, file_name
+        self.cwd, self.out_path = os.getcwd(), out_path
+        self._data = None
         self.last_frame, self.last_point = None, None
         self.wait_between_frames = 0
 
@@ -27,21 +28,27 @@ class VideoPlayer:
         self.play_pause_button, self.seeker = None, None
 
         # Open the video player
-        self.file_path = filedialog.askopenfilename(filetypes=[("MP4 files", "*.mp4")])
-        if self.file_path:
-            self.cap = cv2.VideoCapture(self.file_path)
+        # check if file exists
+        if not os.path.exists(f"{self.file_path}/{self.file_name}"):
+            messagebox.showerror("Error", "File not found.")
+            return
+        else:
+            self.cap = cv2.VideoCapture(f"{self.file_path}/{self.file_name}")
             if not self.cap.isOpened():
                 messagebox.showerror("Error", "Failed to open video file.")
                 return
 
-        self._data = Data(path=self.file_path[:self.file_path.rfind("/")+1], name=self.file_path.split("/")[-1].split(".")[0], fps=cv2.CAP_PROP_FPS)
-        self.wait_between_frames = int(1000 // self._data.FPS)
+        self._data = Data(in_path=self.file_path, out_path=self.out_path, name=self.file_name, fps=self.cap.get(cv2.CAP_PROP_FPS), fc=self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.wait_between_frames = int(1000 // self._data.FPS + 1)
         print(f"FPS recorded: {self._data.FPS}")
+        print(f"Frame Count: {self._data.frame_count}")
+        print(f"Wait Time: {self.wait_between_frames}")
 
         # TODO: setup audio input
 
-        self.setup_video_window(self.cap)
-        self.update_frame()
+        self.setup_video_window()
+        self.update()
+        # self.update_frame()
 
     def setup_video_window(self):
         self.video_window = ctk.CTkToplevel()
@@ -63,7 +70,7 @@ class VideoPlayer:
         self.control_frame.pack(pady=10)
 
         # Handle Play/Pause button and Pause frames
-        self.play_pause_button = ctk.CTkButton(self.control_frame, text="Pause", command=self.toggle_pause)
+        self.play_pause_button = ctk.CTkButton(self.control_frame, text="▐▐", command=self.toggle_pause)
         self.play_pause_button.grid(row=0, column=0, padx=5)
 
         # Handle Seeker bar
@@ -100,13 +107,35 @@ class VideoPlayer:
         self.paused = not self.paused
 
         # Update the label of the button based on the current state after toggling
-        self.play_pause_button.configure(text="Play" if self.paused else "Pause")
+        self.play_pause_button.configure(text="▶" if self.paused else "▐▐")
         # FIXME: handle pause frames preferable something like update_frame()
 
     def seek(self, value):
         # TODO : Make this faster and in real time
-        self.cap.set(cv2.CAP_PROP_POS_FRAMES, int(value))
-        self.update_frame()
+        print(f"Seeking to frame {value}")
+        self._data.update_curr_frame(int(value))
+        # self.cap.set(cv2.CAP_PROP_POS_FRAMES, int(value))
+        # self.update_frame()
+
+    def update(self):
+        frame = self._data.get_next_frame(paused=self.paused)
+
+        if not frame:
+            self.cap.release()
+            self._data.save_video_data()
+            # self._data.save_audio_video_data()
+            self.video_window.destroy()
+            # self.audio_stream.stop()
+        else:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(frame)
+            ctk_img = CTkImage(light_image=img, size=(frame.shape[1], frame.shape[0]))
+
+            self.video_label.configure(image=ctk_img)
+            self.video_label.image = ctk_img
+
+            self.seeker.set(self._data.get_curr_frame())
+            self.video_label.after(self.wait_between_frames, self.update)
 
     def update_frame(self):
         if not self.paused:
@@ -133,6 +162,3 @@ class VideoPlayer:
                 # self._data.save_audio_video_data()
                 self.video_window.destroy()
                 # self.audio_stream.stop()
-
-def open_player():
-    return VideoPlayer()

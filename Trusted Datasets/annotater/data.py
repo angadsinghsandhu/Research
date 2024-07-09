@@ -1,5 +1,5 @@
 from functools import lru_cache, cached_property
-from tkinter import filedialog
+from customtkinter import filedialog
 import subprocess, cv2
 from scipy.io.wavfile import write
 import numpy as np
@@ -22,19 +22,29 @@ class Data:
         - save_audio_video_data(): Save audio and video data to a file.
         - save_annotations(): Save annotations to a file.
     """
-    def __init__(self, path, name, fps=30.0):
-        self.in_path = path     # Path to the video file selected
-        self.name = name        # Default name of the file (same name as selected file)
-        self.FPS = fps          # Frames per second of the selected video
-        self.out_path = None    # Path where the video file will be saved
+    def __init__(self, in_path, out_path, name, fps=30.0, fc=10225):
+        print(f"Data Object Created for {name}")
+        print(f"Input Path: {in_path}")
+        print(f"Output Path: {out_path}")
+        print(f"Name: {name}")
+        print(f"FPS: {fps}")
+        print(f"Frame Count: {fc}")
+        self.in_path = in_path      # Path to the video file selected
+        self.name = name            # Default name of the file (same name as selected file)
+        self.FPS = fps              # Frames per second of the selected video
+        self.frame_count = int(fc)  # Frame count of the selected video
+        self.out_path = out_path    # Path where the video file will be saved
 
         self.frames = []
         self.audio_data =  []
         self.annotations = {}
 
-        self.init_time = time.time()
-        self.curr_time = None
-        self.end_time = None
+        self.curr_frame = 0
+        self.max_frame = int(fc)
+
+        # TODO : copy the frames from the input video to self.frames
+        self.frames = [cv2.imread(f"{in_path}/{name}") for _ in range(self.frame_count)]
+        print(f"{self.get_video_data_length} Frames Copied")
 
     # METHODS TO COMBINE DATA
 
@@ -56,6 +66,32 @@ class Data:
     @lru_cache(maxsize=128)
     def get_annotation(self, timestamp):
         return self.annotations[timestamp]
+    
+    @cached_property
+    def get_curr_frame(self):
+        return self.curr_frame
+    
+    @cached_property
+    def get_max_frame(self):
+        return self.max_frame
+    
+    # FRAME HANDLING
+
+    @lru_cache(maxsize=128)
+    def get_current_frame(self):
+        return self.frames[self.curr_frame]
+    
+    def get_next_frame(self, paused=False):
+        if self.curr_frame >= self.max_frame: return None
+        assert self.curr_frame < self.max_frame, "End of video reached"
+
+        if paused: 
+            self.max_frame += 1
+            # duplicate the currect frame
+            self.frames.insert(self.curr_frame, self.frames[self.curr_frame - 1])
+
+        self.curr_frame += 1
+        return self.frames[self.curr_frame]
     
     # MOTHODS TO GET DATA LENGTH
 
@@ -85,18 +121,24 @@ class Data:
         time_diff = self.curr_time - self.init_time
         self.annotations[time_diff] = annotation
 
+    # METHODS TO UPDATE DATA
+
+    def update_curr_frame(self, frame):
+        self.curr_frame = frame
+
     # METHODS TO SAVE DATA
 
     def save_video_data(self):
         """Function to save video and audio, and merge them using FFmpeg"""
         try:
-            self.out_path = filedialog.asksaveasfilename(defaultextension=f"{self.name}.mp4", filetypes=[("MP4 files", "*.mp4")])
-            if not self.out_path: return
+            if not self.out_path: 
+                self.out_path = filedialog.askdirectory(filetypes=[("MP4 files", "*.mp4")])
+                # self.out_path = filedialog.asksaveasfilename(defaultextension=f"{self.name}.mp4", filetypes=[("MP4 files", "*.mp4")])
 
             # Assume all frames are the same size as the first frame
             height, width, _ = self.frames[0].shape
             fourcc = cv2.VideoWriter_fourcc(*'XVID')
-            out = cv2.VideoWriter(self.out_path, fourcc, self.FPS, (width, height))  # Use actual frame size
+            out = cv2.VideoWriter(f"{self.out_path}/{self.name}", fourcc, self.FPS, (width, height))  # Use actual frame size
             
             for frame in self.frames: out.write(frame)
             out.release()
@@ -104,19 +146,23 @@ class Data:
             # Combine video and audio
             subprocess.run([
                 'ffmpeg', 
-                '-i', self.out_path, 
+                '-i', f"{self.out_path}/{self.name}", 
                 '-c:v', 'copy', 
                 '-c:a', 'aac', 
                 '-strict',  'experimental', 
-                self.out_path.replace('.mp4', '_annotated.mp4')])
+                f"{self.out_path}/{self.name}_annotated"])
         except Exception as e:
             print(f"Error saving video data: {e}")
 
+    # BUG : Update this method to use defualt paths
     def save_audio_video_data(self):
         """Function to save video and audio, and merge them using FFmpeg"""
         try:
             self.out_path = filedialog.asksaveasfilename(defaultextension=f"{self.name}.mp4", filetypes=[("MP4 files", "*.mp4")])
             if not self.out_path: return
+
+            # assert that audio data and video data are in sync
+            assert len(self.frames) == len(self.audio_data), "Audio and video data are not in sync"
 
             height, width, _ = self.frames[0].shape
             fourcc = cv2.VideoWriter_fourcc(*'XVID')
@@ -141,6 +187,7 @@ class Data:
         except Exception as e:
             print(f"Error saving audio-video data: {e}")
 
+    # BUG : Update this method to use defualt paths
     def save_annotations(self):
         """Save annotations to a JSON file"""
         try:
