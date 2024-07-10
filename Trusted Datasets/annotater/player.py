@@ -5,7 +5,6 @@ from customtkinter import CTkImage
 from tkinter import messagebox
 from data import Data
 
-
 class VideoPlayer:
     def __init__(self, file_path, file_name, out_path):
         # TODO : add audio callback function
@@ -29,17 +28,23 @@ class VideoPlayer:
 
         # Open the video player
         # check if file exists
-        if not os.path.exists(f"{self.file_path}/{self.file_name}"):
+        if not os.path.exists(f"{self.file_path}\{self.file_name}"):
             messagebox.showerror("Error", "File not found.")
             return
         else:
-            self.cap = cv2.VideoCapture(f"{self.file_path}/{self.file_name}")
+            self.cap = cv2.VideoCapture(f"{self.file_path}\{self.file_name}")
             if not self.cap.isOpened():
                 messagebox.showerror("Error", "Failed to open video file.")
                 return
 
-        self._data = Data(in_path=self.file_path, out_path=self.out_path, name=self.file_name, fps=self.cap.get(cv2.CAP_PROP_FPS), fc=self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        self.wait_between_frames = int(1000 // self._data.FPS + 1)
+        self._data = Data(
+            in_path=self.file_path, out_path=self.out_path, 
+            name=self.file_name, 
+            frame_width=int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH)), 
+            frame_height=int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), 
+            fps=self.cap.get(cv2.CAP_PROP_FPS), fc=self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.wait_between_frames = int(1000 // self._data.FPS - 1)
+
         print(f"FPS recorded: {self._data.FPS}")
         print(f"Frame Count: {self._data.frame_count}")
         print(f"Wait Time: {self.wait_between_frames}")
@@ -47,8 +52,7 @@ class VideoPlayer:
         # TODO: setup audio input
 
         self.setup_video_window()
-        self.update()
-        # self.update_frame()
+        self.update_frame()
 
     def setup_video_window(self):
         self.video_window = ctk.CTkToplevel()
@@ -82,11 +86,8 @@ class VideoPlayer:
     
     def close_window(self, video_window):
         self.cap.release()
-        if len(self._data.audio_data) > 0:
-            self._data.save_audio_video_data()
-        else:
-            self._data.save_video_data()
-
+        self._data.save_data()
+        # self.audio_stream.stop()
         video_window.destroy()
 
     def on_mouse_click(self, event):
@@ -117,48 +118,26 @@ class VideoPlayer:
         # self.cap.set(cv2.CAP_PROP_POS_FRAMES, int(value))
         # self.update_frame()
 
-    def update(self):
-        frame = self._data.get_next_frame(paused=self.paused)
-
-        if not frame:
-            self.cap.release()
-            self._data.save_video_data()
-            # self._data.save_audio_video_data()
-            self.video_window.destroy()
-            # self.audio_stream.stop()
-        else:
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            img = Image.fromarray(frame)
-            ctk_img = CTkImage(light_image=img, size=(frame.shape[1], frame.shape[0]))
-
-            self.video_label.configure(image=ctk_img)
-            self.video_label.image = ctk_img
-
-            self.seeker.set(self._data.get_curr_frame())
-            self.video_label.after(self.wait_between_frames, self.update)
-
     def update_frame(self):
         if not self.paused:
             ret, frame = self.cap.read()
-            if ret:
-                self.last_frame = frame.copy()
-                self._data.add_video_data(frame.copy())
-                # TODO : add audio data along with video data
-                # self._data.add_audio_data(audio)
+            current_frame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+            print(f"Current Frame Number: {current_frame}")
+            if ret:     # if frame is read successfully
+                self._data.add_curr_frame(current_frame)
+
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)          # convert the frame to RGB
+                img = Image.fromarray(frame)                            # convert the frame to an image
+                ctk_img = CTkImage(light_image=img, size=(frame.shape[1], frame.shape[0]))  # create a custom image object
                 
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                img = Image.fromarray(frame)
-                ctk_img = CTkImage(light_image=img, size=(frame.shape[1], frame.shape[0]))
+                self.video_label.configure(image=ctk_img)                # update the label
+                self.video_label.image = ctk_img                         # update the image
 
-                self.video_label.configure(image=ctk_img)
-                self.video_label.image = ctk_img
-
-                current_frame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
                 self.seeker.set(current_frame)
                 self.video_label.after(self.wait_between_frames, self.update_frame)
-            else:
+                
+            else:       # if frame is not read successfully
                 self.cap.release()
-                self._data.save_video_data()
-                # self._data.save_audio_video_data()
-                self.video_window.destroy()
+                self._data.save_data()
                 # self.audio_stream.stop()
+                self.video_window.destroy()

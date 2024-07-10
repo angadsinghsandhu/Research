@@ -158,7 +158,7 @@ def main(args):
         model_engine.train()  # Set the model to train mode
 
         # Wrap the training data iterator with tqdm for a progress bar
-        train_loader_with_progress = tqdm(enumerate(trainloader), total=len(trainloader), desc=f"Epoch {epoch+1}/{EPOCHS}")
+        train_loader_with_progress = tqdm(enumerate(trainloader), total=len(trainloader), desc=f"Epoch {epoch+1}\{EPOCHS}")
 
         for i, data in train_loader_with_progress:
             # get the input data
@@ -226,7 +226,7 @@ def main(args):
         model_engine.eval()  # Set the model to eval mode
 
         # Wrap the validation data iterator with tqdm for a progress bar
-        val_loader_with_progress = tqdm(enumerate(valloader), total=len(valloader), desc=f"Epoch {epoch+1}/{EPOCHS}")
+        val_loader_with_progress = tqdm(enumerate(valloader), total=len(valloader), desc=f"Epoch {epoch+1}\{EPOCHS}")
 
         with torch.no_grad():
             for i, data in val_loader_with_progress:
