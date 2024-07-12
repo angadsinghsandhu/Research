@@ -26,8 +26,8 @@ def show_splash(root):
     # Center the splash screen
     screen_width = splash.winfo_screenwidth()
     screen_height = splash.winfo_screenheight()
-    window_width = int(screen_width//2)
-    window_height = int(screen_height//2)
+    window_width = int(screen_width//3)
+    window_height = int(screen_height//3)
     position_top = (screen_height // 2) - (window_height // 2)
     position_right = (screen_width // 2) - (window_width // 2)
     splash.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
@@ -131,7 +131,7 @@ def change_directory():
         print(f"Current working directory changed to: {new_directory}")
         file_setup()
 
-def annotate():
+def annotate(app):
     global in_path, out_path, files
     global cwd_label, in_label, out_label, file_label
 
@@ -139,7 +139,10 @@ def annotate():
         print(f"Annotating {file_name}")
         file_label.configure(text=f"File Name: {file_name}") # update file name
 
-        player = VideoPlayer(in_path, file_name, out_path)
+        VideoPlayer(app, in_path, file_name, out_path)
+
+    # # close the application
+    # messagebox.showinfo("Info", "All files have been annotated.")
 
 def run(app):
     global in_path, out_path, files, file_name
@@ -165,6 +168,7 @@ def run(app):
     def update_window_position(event):
         window_position_label.configure(text=f"Window Position: {app.winfo_x()}, {app.winfo_y()}")
 
+    # Handle window move event
     app.bind("<Configure>", update_window_position)
 
     # Setup Files
@@ -174,17 +178,19 @@ def run(app):
     change_dir_button.pack(pady=40)
 
     # Open Video Player Button
-    video_button = ctk.CTkButton(app, text="Begin Annotating", command=annotate)
+    video_button = ctk.CTkButton(app, text="Begin Annotating", command=lambda: annotate(app))
     video_button.pack(pady=20)
 
 # run main loop
 if __name__ == "__main__":
+
     # Set the theme (optional)
     ctk.set_appearance_mode("Dark")  # Can be "Dark" or "Light"
 
     # Create the main application window
     app = ctk.CTk()
     app.title("Annotater") # Set the title of the window
+    app.protocol("WM_DELETE_WINDOW", lambda: app.destroy())
 
     # Show splash screen
     show_splash(app)
@@ -199,8 +205,8 @@ if __name__ == "__main__":
     # ctk.set_fg("white")  # Set the default foreground color
 
     # Set geometry to the full screen
-    screen_width = app.winfo_screenwidth()
-    screen_height = app.winfo_screenheight()
+    screen_width = int(app.winfo_screenwidth()/2)
+    screen_height = int(app.winfo_screenheight()/2)
     offset = 1/4
     # geo = f"{screen_width}x{screen_height}+{offset*screen_width}+{offset*screen_height}"
     geo = f"{screen_width}x{screen_height}-9-9"

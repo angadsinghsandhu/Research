@@ -220,15 +220,17 @@ class Data:
 
         cap.release()
 
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         out = cv2.VideoWriter(f"{self.out_path}\{self.name}", fourcc, self.FPS, (self.frame_width, self.frame_height))
 
         # Write frames to the output video in the specified order
+        print(f"Writing {len(self.frames)} frames to {self.out_path}\{self.name}")
         for index in self.frames:
             if index < len(vid):
                 out.write(vid[index])
             else:
                 print(f"Warning: Frame index {index} is out of range.")
+        print(f"Video saved to {self.out_path}\{self.name}")
 
 
     def save_data(self):
