@@ -1,7 +1,7 @@
-import threading, os
+import threading
 import customtkinter as ctk
 from annotater.player import VideoPlayer
-from annotater.setup import file_setup, change_directory
+from annotater.setup import file_setup, change_directory, refetch_files
 from tkinter import messagebox
 
 # Global Variables
@@ -14,7 +14,7 @@ def annotate(app):
     for file_name in files:
         print(f"Annotating {file_name}")
         done_event = threading.Event()
-        VideoPlayer(app, in_path, file_name, out_path, done_event=done_event)
+        VideoPlayer(app, file_name, done_event=done_event)
         done_event.wait()
 
     # close the application
@@ -32,6 +32,10 @@ def run(app):
     # Open Video Player Button
     video_button = ctk.CTkButton(app, text="Begin Annotating", command=lambda: annotate(app))
     video_button.pack(pady=20)
+
+    # Button to refresh files
+    refresh_button = ctk.CTkButton(app, text="Refresh Files", command=lambda: refetch_files())
+    refresh_button.pack(pady=20)
 
 # Functions
 def create_annotater(app):

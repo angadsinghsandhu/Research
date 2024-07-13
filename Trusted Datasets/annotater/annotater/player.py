@@ -1,9 +1,11 @@
 import cv2, os, time, threading, queue
+from tqdm import tqdm
 from PIL import Image
 import customtkinter as ctk
 from customtkinter import CTkImage
 from tkinter import messagebox, Tk, DoubleVar
 from data import Data
+from config import config
 
 # TODO : add audio callback function
 # TODO: setup audio input
@@ -11,7 +13,7 @@ from data import Data
 # TODO : Make seeker faster and in real time
 
 class VideoPlayer:
-    def __init__(self, app, file_path, file_name, out_path, done_event):
+    def __init__(self, app, file_name, done_event):
         
         # Video Player Objects
         self.app = app
@@ -19,8 +21,8 @@ class VideoPlayer:
         self.done_event = done_event  # Event to signal completion
 
         # Variables
-        self.file_path, self.file_name = file_path, file_name
-        self.cwd, self.out_path = os.getcwd(), out_path
+        self.file_path, self.file_name = config.in_path, file_name
+        self.cwd, self.out_path = os.getcwd(), config.out_path
         self._data = None
         self.last_frame, self.last_point = None, None
 
@@ -64,14 +66,6 @@ class VideoPlayer:
         # Ensure control window is only set up once
         if self.control_window is None:
             self.control_window = ControlWindow(self.app, self.file_name, self)
-            self.control_window.deiconify()
-            # self.setup_control_window()
-            # # Ensure control window is only set up once
-            # self.app.after(0, self.setup_control_window)
-
-        # Start video processing in a separate thread
-        
-        # self.video_thread.start()
 
     # def on_mouse_click(self, event):
     #     if event.num == 1 and self.paused:  # Ensure this happens only if the video is paused
@@ -95,46 +89,41 @@ class VideoPlayer:
         cv2.namedWindow("Video Player")
         cv2.setMouseCallback("Video Player", self.mouse_callback)
 
-        while self.cap.isOpened():
-            start_time = time.time()
-            curr_frame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+        total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        with tqdm(total=total_frames, desc="Processing Frames") as pbar:
+            while self.cap.isOpened():
+                start_time = time.time()
+                curr_frame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
 
-            try:
-                command = self.command_queue.get_nowait()
-                if command == 'pause':
-                    self.toggle_pause()
-                elif isinstance(command, tuple) and command[0] == 'seek':
-                    self.seek_to_frame(command[1])
-            except queue.Empty:
-                pass
+                try:
+                    command = self.command_queue.get_nowait()
+                    if command == 'pause': self.toggle_pause()
+                    elif isinstance(command, tuple) and command[0] == 'seek': self.seek_to_frame(command[1])
+                except queue.Empty:
+                    pass
 
-            if not self.paused:
-                ret, frame = self.cap.read()
-                print(f"Current Frame: {curr_frame}")
-                
-                if not ret: break
+                if not self.paused:
+                    ret, frame = self.cap.read()
                     
-                self.last_frame = frame.copy()
-                self._data.add_curr_frame(curr_frame)
-                cv2.imshow("Video Player", frame)
-                key = cv2.waitKey(1) & 0xFF
-            else:
-                self._data.add_curr_frame(curr_frame)
-                print(f"Current Frame: {curr_frame}")
-                key = cv2.waitKey(1) & 0xFF  # Ensure responsiveness during pause
-                if key == ord('q'): break
+                    # TODO : think about ending
+                    if not ret: break
+                        
+                    self.last_frame = frame.copy()
+                    self._data.add_curr_frame(curr_frame)
+                    cv2.imshow("Video Player", frame)
+                    key = cv2.waitKey(1) & 0xFF
+                else:
+                    self._data.add_curr_frame(curr_frame)
+                    key = cv2.waitKey(1) & 0xFF  # Ensure responsiveness during pause
+                    if key == ord('q'): break
 
-            elapsed_time = time.time() - start_time
-            remaining_time = max(0, self.frame_delay / 1000 - elapsed_time)  # Convert frame_delay to seconds
-            if remaining_time > 0:
-                time.sleep(remaining_time)
+                # Update progress bar
+                pbar.update(1)
 
-        # self.cap.release()
-        # self._data.save_data()
-        # cv2.destroyAllWindows()
-        # self.control_window.destroy()
-        # self.done_event.set()  # Signal that the annotation is done
-        # print("Window closed")
+                elapsed_time = time.time() - start_time
+                remaining_time = max(0, self.frame_delay / 1000 - elapsed_time)  # Convert frame_delay to seconds
+                if remaining_time > 0:
+                    time.sleep(remaining_time)
 
     def toggle_pause(self):
         print("Toggling pause")

@@ -11,9 +11,7 @@ def show_splash(root):
     screen_width = splash.winfo_screenwidth()
     screen_height = splash.winfo_screenheight()
     window_width = int(screen_width//3)
-    window_height = int(screen_height//3)
-    # window_width = int(screen_width*0.8)
-    # window_height = int(screen_height*0.8)
+    window_height = int(screen_height//2)
     position_top = (screen_height // 2) - (window_height // 2)
     position_right = (screen_width // 2) - (window_width // 2)
     splash.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
@@ -44,7 +42,8 @@ def show_splash(root):
             print(f"Resized Image Size: {new_width}x{new_height}")
 
         print(f"Image size: {img.size}")
-        img_ctk = ImageTk.PhotoImage(img)  # Convert to PhotoImage
+        # img_ctk = ImageTk.PhotoImage(img)  # Convert to PhotoImage
+        img_ctk = ctk.CTkImage(img, size=(img.width, img.height))  # Convert to CTkImage
         # Create and place the image label
         image_label = ctk.CTkLabel(splash, text="", image=img_ctk)
         image_label.pack(pady=20)

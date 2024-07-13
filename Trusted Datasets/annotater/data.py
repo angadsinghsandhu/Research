@@ -64,61 +64,6 @@ class Data:
         self.curr_frame = 0
         self.max_frame = int(fc)
 
-        # self.load_frames(in_path, name)
-
-    # METHODS TO LOAD DATA
-
-    # def load_frames(self, in_path, name):
-    #     load = ctk.CTk()
-    #     load.geometry("400x200")
-    #     load.title("Loading...")
-
-    #     # Center the window on the screen
-    #     window_width = 400
-    #     window_height = 200
-    #     screen_width = load.winfo_screenwidth()
-    #     screen_height = load.winfo_screenheight()
-    #     position_top = int(screen_height / 2 - window_height / 2)
-    #     position_right = int(screen_width / 2 - window_width / 2)
-    #     load.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
-
-    #     # Create a frame to center the progress bar
-    #     frame = ctk.CTkFrame(load)
-    #     frame.grid(row=0, column=0, padx=20, pady=60)
-
-    #     # Progress bar to indicate frame caching
-    #     self.progress_var = ctk.DoubleVar()
-    #     progress_bar = ctk.CTkProgressBar(frame, variable=self.progress_var)
-    #     progress_bar.grid(row=0, column=0, padx=10, pady=10, sticky='ew')
-
-    #     # Make the frame and progress bar responsive
-    #     frame.grid_columnconfigure(0, weight=1)
-    #     frame.grid_rowconfigure(0, weight=1)
-
-    #     cap = cv2.VideoCapture(f"{in_path}\{name}")
-    #     if not cap.isOpened():
-    #         messagebox.showerror("Error", "Failed to open video file.")
-    #         return
-
-    #     def cache():
-    #         while True:
-    #             ret, frame = cap.read()
-    #             if not ret:
-    #                 break
-    #             self.frames.append(frame)
-    #             progress = len(self.frames) / self.frame_count * 100
-    #             self.progress_var.set(progress)
-    #             load.update()  # Update the load window to reflect progress
-    #         cap.release()
-    #         load.destroy()
-
-    #     cache()
-
-    #     print(f"{type(self.frames)}")
-    #     print(f"{type(self.frames[0])}")
-    #     print(f"{self.frames[0]}")
-    #     print(f"{self.get_video_data_length} Frames Copied")
-
     # METHODS TO COMBINE DATA
 
     @cached_property

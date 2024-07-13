@@ -25,3 +25,5 @@ if __name__ == "__main__":
     show_splash(app)
 
     create_annotater(app)
+
+    # TODO: Show annotated video

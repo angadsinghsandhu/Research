@@ -1,6 +1,15 @@
 import os
 from customtkinter import filedialog
 from tkinter import messagebox
+from config import config
+
+def refetch_files():
+    # TODO : attach to button in annotater
+    in_path, out_path = config.in_path, config.out_path
+    files = [f for f in os.listdir(in_path) if f.endswith(".mp4")]
+    files = [f for f in files if f not in os.listdir(out_path) if f.endswith(".mp4")]
+    config.update(in_path, out_path, files)
+    return files
 
 def file_setup():
     global in_path, out_path, files
@@ -32,6 +41,7 @@ def file_setup():
         messagebox.showinfo("Info", "All files have been annotated.")
         return None, None, None
     
+    config.update(in_path, out_path, files)
     return in_path, out_path, files
 
 def change_directory():
