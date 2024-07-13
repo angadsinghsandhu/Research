@@ -1,0 +1,53 @@
+{
+    "os": "Windows-10-10.0.22631-SP0",
+    "python": "3.11.9",
+    "heartbeatAt": "2024-07-13T14:17:16.377273",
+    "startedAt": "2024-07-13T14:17:16.133140",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "D:\\Code\\Research\\Trusted Datasets\\textcat-lm\\train.py",
+    "codePathLocal": "train.py",
+    "codePath": "Trusted Datasets\\textcat-lm\\train.py",
+    "git": {
+        "remote": "https://github.com/angadsinghsandhu/Research.git",
+        "commit": "c8c9d5e025c8e3210e36f2a4a489b6ddfdabf01b"
+    },
+    "email": "55819847+angadsinghsandhu@users.noreply.github.com",
+    "root": "D:/Code/Research",
+    "host": "A-RAZER-15",
+    "username": "angad",
+    "executable": "C:\\Users\\angad\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+    "cpu_count": 6,
+    "cpu_count_logical": 12,
+    "cpu_freq": {
+        "current": 2601.0,
+        "min": 0.0,
+        "max": 2601.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2601.0,
+            "min": 0.0,
+            "max": 2601.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 931.4960899353027,
+            "used": 333.0501365661621
+        }
+    },
+    "gpu": "NVIDIA GeForce GTX 1660 Ti",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce GTX 1660 Ti",
+            "memory_total": 6442450944
+        }
+    ],
+    "memory": {
+        "total": 15.900753021240234
+    }
+}
