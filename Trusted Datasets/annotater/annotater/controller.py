@@ -24,11 +24,11 @@ class ControlWindow(ctk.CTkToplevel):
         self.restart_button = ctk.CTkButton(self.control_frame, text="↺", command=self.restart)
         self.restart_button.grid(row=0, column=2, padx=5)
 
-        self.stop_button = ctk.CTkButton(self.control_frame, text="■", command=self.stop_annotating)
+        self.stop_button = ctk.CTkButton(self.control_frame, text="■", command=self.save_and_close)
         self.stop_button.grid(row=0, column=3, padx=5)
 
         self.columnconfigure(1, weight=1)
-        self.protocol("WM_DELETE_WINDOW", self.close_control_window)
+        self.protocol("WM_DELETE_WINDOW", self.close)
         
         # Make the control window screen topmost
         self.attributes("-topmost", True)
@@ -50,9 +50,10 @@ class ControlWindow(ctk.CTkToplevel):
         self.play_pause_button.configure(text="▐▐")
         self.seek_var.set(0)
 
-    def stop_annotating(self):
-        self.close_control_window()
+    def save_and_close(self):
+        self.video_player.close(save=True)
+        self.video_player.done_event.set()
 
-    def close_control_window(self):
-        self.video_player.close_video_player()
+    def close(self):
+        self.video_player.close()
         self.video_player.done_event.set()
