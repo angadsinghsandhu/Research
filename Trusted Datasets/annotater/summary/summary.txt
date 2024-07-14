@@ -1,0 +1,817 @@
+DIRECTORY STRUCTURE: .
++f	config.py
++f	data.py
++f	main.py
++f	splash.py
++d	annotater
+++f		anno.py
+++f		controller.py
+++f		player.py
+++f		setup.py
+
+d: directory, f: file
+
+FILE CONTENTS:
+
+|||||||||||||		File: config.py		|||||||||||||
+# General Imports
+import os, time
+
+class Config:
+    def __init__(self, cwd=None, in_path=None, out_path=None, files=[]):
+        self._cwd = cwd
+        self._in_path = in_path
+        self._out_path = out_path
+        self._files = files
+        self._last_update = time.time()
+
+    def update(self, in_path=None, out_path=None, files=[]):
+        self.cwd = os.getcwd()
+        self.in_path = in_path
+        self.out_path = out_path
+        self.files = files
+        self.last_update = time.time()
+
+    def __str__(self):
+        return f"Config: cwd={self.cwd}, in_path={self.in_path}, out_path={self.out_path}, files={self.files}, last_update={self.last_update}"
+    
+    def __repr__(self):
+        return self.__str__()
+    
+    def __eq__(self, other):
+        return self.cwd == other.cwd and self.in_path == other.in_path and self.out_path == other.out_path and self.files == other.files and self.last_update == other.last_update
+
+    @property
+    def fetch_top_file(self):
+        if len(self.files) == 0:
+            return None
+        return self.files[0]
+    
+    def refetch_files(self, inp=None, out=None):
+        if inp is not None: self.in_path = inp
+        if out is not None: self.out_path = out
+
+        in_path, out_path = self.in_path, self.out_path
+        files = [f for f in os.listdir(in_path) if f.endswith(".mp4")]
+        files = [f for f in files if f"{f}" not in os.listdir(out_path) if f.endswith(".mp4")]
+        # files = [f for f in files if f"{f}_annotated" not in os.listdir(out_path) if f.endswith(".mp4")]
+        self.update(in_path, out_path, files)
+        return files
+
+    # Properties with getters and setters
+    @property
+    def cwd(self):
+        return self._cwd
+
+    @cwd.setter
+    def cwd(self, value):
+        self._cwd = value
+    
+    @property
+    def in_path(self):
+        return self._in_path
+
+    @in_path.setter
+    def in_path(self, value):
+        self._in_path = value
+    
+    @property
+    def out_path(self):
+        return self._out_path
+
+    @out_path.setter
+    def out_path(self, value):
+        self._out_path = value
+    
+    @property
+    def files(self):
+        return self._files
+
+    @files.setter
+    def files(self, value):
+        self._files = value
+    
+    @property
+    def last_update(self):
+        return self._last_update
+
+    @last_update.setter
+    def last_update(self, value):
+        self._last_update = value
+
+config = Config()
+
+
+|||||||||||||		File: data.py		|||||||||||||
+# General Imports
+import subprocess, cv2, time, json
+import numpy as np
+from functools import lru_cache, cached_property
+from customtkinter import filedialog
+from tkinter import messagebox
+from scipy.io.wavfile import write
+
+class Data:
+    """
+    Class to store video and audio data, and annotations.
+
+    Parameters:
+        - path (str): Path to save video and audio files.
+        - name (str): Name of the video file.
+        - fps (float): Frames per second of the video.
+
+    Methods:
+        - add_video_data(frame): Add video data to the frames list.
+        - add_audio_data(audio): Add audio data to the audio list.
+        - add_annotation(annotation): Add annotation to the annotations dictionary.
+        - save_video_data(): Save video data to a file.
+        - save_audio_video_data(): Save audio and video data to a file.
+        - save_annotations(): Save annotations to a file.
+    """
+    def __init__(self, in_path, out_path, name, frame_width, frame_height, fps=30.0, fc=10225):
+
+        def print_data_object_info(name, in_path, out_path, fps, fc):
+            table_data = [
+                ["Description", "Value"],
+                ["Data Object Created for", name],
+                ["Input Path", in_path],
+                ["Output Path", out_path],
+                ["Name", name],
+                ["FPS", fps],
+                ["Frame Count", fc]
+            ]
+
+            column_width = max(len(str(item)) for row in table_data for item in row) + 2
+            separator = "+" + "-" * (column_width * 2 + 1) + "+"
+
+            print(separator)
+            for row in table_data:
+                print("|" + "|".join(str(item).center(column_width) for item in row) + "|")
+                print(separator)
+
+        print_data_object_info(name, in_path, out_path, fps, fc)
+
+        self.in_path = in_path      # Path to the video file selected
+        self.out_path = out_path    # Path where the video file will be saved
+        self.name = name            # Default name of the file (same name as selected file)
+        
+        self.FPS = fps                      # Frames per second of the selected video
+        self.frame_count = int(fc)          # Frame count of the selected video
+        self.frame_width = frame_width      # Width of the frame
+        self.frame_height = frame_height    # Height of the frame
+
+        self.frames = []
+        self.audio_data =  []
+        self.annotations = {}
+
+        self.curr_frame = 0
+        self.max_frame = int(fc)
+
+    # METHODS TO COMBINE DATA
+
+    @cached_property
+    def combined_audio(self):
+        """Combines all audio data into a single array, expensive operation hence cached"""
+        return np.concatenate(self.audio_data, axis=0)
+
+    # METHODS TO GET DATA
+
+    @lru_cache(maxsize=128)
+    def get_video_frame(self, index):
+        return self.frames[index]
+    
+    @lru_cache(maxsize=128)
+    def get_audio_data(self, index):
+        return self.audio_data[index]
+    
+    @lru_cache(maxsize=128)
+    def get_annotation(self, timestamp):
+        return self.annotations[timestamp]
+    
+    @cached_property
+    def get_curr_frame(self):
+        return self.curr_frame
+    
+    @cached_property
+    def get_max_frame(self):
+        return self.max_frame
+    
+    # FRAME HANDLING
+
+    @lru_cache(maxsize=128)
+    def get_current_frame(self):
+        return self.frames[self.curr_frame]
+    
+    # MOTHODS TO GET DATA LENGTH
+
+    @cached_property
+    def get_frames_length(self):
+        return len(self.frames)
+    
+    @cached_property
+    def get_audio_data_length(self):
+        return len(self.audio_data)
+    
+    @cached_property
+    def get_annotations_length(self):
+        return len(self.annotations)
+
+    # METHODS TO ADD DATA
+
+    def add_curr_frame(self, frame):
+        if frame >= self.frame_count:
+            print(f"Frame index {frame} is out of range.")
+        self.frames.append(frame)
+
+    def add_audio_data(self, audio):
+        self.audio_data.append(audio)
+
+    def add_annotation(self, annotation):
+        """Adds annotations with timestamp, potentially expensive if called frequently"""
+        self.curr_time = time.time()
+        time_diff = self.curr_time - self.init_time
+        self.annotations[time_diff] = annotation
+
+    # METHODS TO UPDATE DATA
+
+    def update_curr_frame(self, frame):
+        self.curr_frame = frame
+
+    def update_max_frame(self, frame):
+        self.max_frame = frame
+
+    def increment_max_frame(self):
+        self.max_frame += 1
+
+    # METHODS TO SAVE DATA
+
+    def process_video_data(self):
+        # open the video file
+        cap = cv2.VideoCapture(f"{self.in_path}\{self.name}")
+
+        # check if the video file is opened
+        if not cap.isOpened():
+            messagebox.showerror("Error", "Failed to open video file.")
+            return
+        
+        # read the video file frame by frame
+        vid, fr_cnt = [], 0
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            vid.append(frame)
+            fr_cnt += 1
+
+        # Get original video properties
+        original_fps = cap.get(cv2.CAP_PROP_FPS)
+        original_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        original_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+        # Assert that the original properties match the given values
+        assert original_fps == self.FPS, f"FPS mismatch: {original_fps} != {self.FPS}"
+        assert original_width == self.frame_width, f"Frame width mismatch: {original_width} != {self.frame_width}"
+        assert original_height == self.frame_height, f"Frame height mismatch: {original_height} != {self.frame_height}"
+        assert fr_cnt == self.frame_count, "Frame count mismatch"
+
+        cap.release()
+
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        out = cv2.VideoWriter(f"{self.out_path}\{self.name}", fourcc, self.FPS, (self.frame_width, self.frame_height))
+
+        # Write frames to the output video in the specified order
+        print(f"Writing {len(self.frames)} frames to {self.out_path}\{self.name}")
+        for index in self.frames:
+            if index < len(vid):
+                out.write(vid[index])
+            else:
+                print(f"Warning: Frame index {index} is out of range.")
+        print(f"Video saved to {self.out_path}\{self.name}")
+
+
+    def save_data(self):
+        """Function to save video and audio, and merge them using FFmpeg"""
+        try:
+            if not self.out_path:
+                self.out_path = filedialog.askdirectory(filetypes=[("MP4 files", "*.mp4")])
+
+            # Check if there's audio data and video data synchronization is needed
+            if len(self.audio_data) > 0:
+                assert len(self.frames) == len(self.audio_data), "Audio and video data are not in sync"
+
+            # Save video data
+            self.process_video_data()
+
+            # Check if audio data and annotations are present
+            if len(self.audio_data) > 0:
+                audio_name = self.name.replace(".mp4", ".wav")
+                write(f"{self.out_path}\{audio_name}", 44100, self.combined_audio)
+
+                subprocess.run([
+                    'ffmpeg',
+                    '-i', f"{self.out_path}\{self.name}",
+                    '-i', f"{self.out_path}\{audio_name}",
+                    '-c:v', 'copy',
+                    '-c:a', 'aac',
+                    '-strict', 'experimental',
+                    self.out_path.replace('.mp4', '_annotated.mp4')
+                ])
+            
+            if self.annotations:
+                """Save annotations to a JSON file"""
+                try:
+                    with open(f"{self.out_path}\\{self.name}_annotations.json", "w") as file:
+                        json.dump(self.annotations, file)
+                except Exception as e:
+                    print(f"Error saving annotations: {e}")
+
+        except Exception as e:
+            print(f"Error saving audio-video-annotation data: {e}")
+
+    # METHODS TO DELETE DATA
+
+    def clean(self):
+        """Function to clean the data object"""
+        self.frames = []
+        self.audio_data = []
+        self.annotations = {}
+        self.curr_frame = 0
+        self.max_frame = 0
+
+|||||||||||||		File: main.py		|||||||||||||
+# imports
+import customtkinter as ctk
+from splash import show_splash
+from annotater.anno import create_annotater
+
+# TODO: Add draw annotations
+# TODO: test Surface audio signal
+# TODO: test annotations recorded 240p and recoreded in 1080p, scaled down to 240p
+
+# run main loop
+if __name__ == "__main__":
+
+    # Set the theme (optional)
+    ctk.set_appearance_mode("Dark")  # Can be "Dark" or "Light"
+
+    # Create the main application window
+    app = ctk.CTk()
+    app.title("Annotater") # Set the title of the window
+    app.protocol("WM_DELETE_WINDOW", lambda: app.destroy())
+
+    # Hide the main application window initially
+    app.withdraw()
+
+    # Show splash screen
+    show_splash(app)
+
+    create_annotater(app)
+
+    # TODO: Show annotated video
+
+|||||||||||||		File: splash.py		|||||||||||||
+# General Imports
+import os, customtkinter as ctk
+from PIL import Image
+
+def show_splash(root):
+    # FIXME : understand why image is not showing on splash screen
+    splash = ctk.CTkToplevel(root)
+    splash.title("Loading...")
+
+    # Center the splash screen
+    screen_width = splash.winfo_screenwidth()
+    screen_height = splash.winfo_screenheight()
+    window_width = int(screen_width//3)
+    window_height = int(screen_height//2)
+    position_top = (screen_height // 2) - (window_height // 2)
+    position_right = (screen_width // 2) - (window_width // 2)
+    splash.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
+
+    # Make the splash screen topmost
+    splash.attributes("-topmost", True)
+
+    # Load and resize the image
+    image_path = "./imgs/jhu.png"
+    max_image_width = window_width - 40  # Max width for the image with padding
+    max_image_height = window_height // 2  # Max height for the image
+
+    if os.path.exists(image_path):
+        img = Image.open(image_path)
+        img_width, img_height = img.size
+
+        # Debug print statement
+        print(f"Original Image Size: {img_width}x{img_height}")
+
+        # Scale down the image if it is too big
+        if img_width > max_image_width or img_height > max_image_height:
+            scaling_factor = min(max_image_width / img_width, max_image_height / img_height)
+            new_width = int(img_width * scaling_factor)
+            new_height = int(img_height * scaling_factor)
+            img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+
+            # Debug print statement
+            print(f"Resized Image Size: {new_width}x{new_height}")
+
+        print(f"Image size: {img.size}")
+        # img_ctk = ImageTk.PhotoImage(img)  # Convert to PhotoImage
+        img_ctk = ctk.CTkImage(img, size=(img.width, img.height))  # Convert to CTkImage
+        # Create and place the image label
+        image_label = ctk.CTkLabel(splash, text="", image=img_ctk)
+        image_label.pack(pady=20)
+    else:
+        print(f"Image not found: {image_path}")
+
+    # Create and place the text label
+    label = ctk.CTkLabel(splash, text="Welcome to the Annotater Application", font=("Arial", 16))
+    label.pack(pady=10)
+
+    countdown_label = ctk.CTkLabel(splash, text="Closing in 3 seconds", font=("Courier", 12))
+    countdown_label.pack(pady=10)
+
+    def update_countdown(count):
+        if count > 0:
+            countdown_label.configure(text=f"Closing in {count} seconds")
+            splash.after(1000, update_countdown, count-1)
+        else:
+            splash.destroy()
+            root.deiconify()    # Show the main window
+
+    window_position_label = ctk.CTkLabel(splash, text=f"Window Position: {splash.winfo_x()}, {splash.winfo_y()}")
+    window_position_label.pack(pady=2)
+
+    # update window position label on window move
+    def update_window_position(event):
+        window_position_label.configure(text=f"Window Position: {splash.winfo_x()}, {splash.winfo_y()}")
+
+    splash.bind("<Configure>", update_window_position)
+
+    splash.update()
+    update_countdown(3)
+
+|||||||||||||		File: annotater\anno.py		|||||||||||||
+# General Imports
+import threading
+import customtkinter as ctk
+from tkinter import messagebox
+
+# Local Imports
+from annotater.player import VideoPlayer
+from annotater.setup import file_setup, change_directory
+from config import config
+
+def annotate(app, current_file_label):
+    file_name = config.fetch_top_file
+    if not file_name:
+        current_file_label.configure(text="All files have been annotated.")
+    else:
+        done_event = threading.Event()
+        player = VideoPlayer(app, file_name, done_event=done_event)
+        done_event.wait()
+        _ = config.refetch_files()
+        current_file_label.configure(text=f"Current File to be Annotated: {config.fetch_top_file}")
+
+def refresh(current_file_label):
+    _ = config.refetch_files()
+    current_file_label.configure(text=f"Current File to be Annotated: {config.fetch_top_file}")
+
+def watch():
+    # TODO: add logic to watch video
+    pass
+
+# Functions
+def create_annotater(app):
+    app.iconbitmap("./imgs/tool.ico")
+
+    # add default styling options
+    ctk.set_default_color_theme("dark-blue")  # Set the default color theme
+    # ctk.set_font("Courier", 12)  # Set the default font and size
+    app.option_add("*Font", "Courier 12")  # Set the default font and size
+
+    # Set geometry to the full screen
+    screen_width = 400
+    screen_height = 350
+    offset = 1/4
+    geo = f"{screen_width}x{screen_height}+{offset*screen_width}+{offset*screen_height}"
+    # geo = f"{screen_width}x{screen_height}-9-9"
+    print(f"Geometry: {geo}")
+    app.geometry(geo)
+
+    # Setup Files
+    file_setup()
+    
+    # Add a label to the window
+    change_dir_button = ctk.CTkButton(app, text="Change Directory", command=change_directory)
+    change_dir_button.pack(pady=20)
+
+    # Add label for the current file name
+    current_file_label = ctk.CTkLabel(app, text=f"Current File to be Annotated: {config.fetch_top_file}")
+    current_file_label.pack(pady=20)
+
+    # Open Video Player Button
+    video_button = ctk.CTkButton(app, text="Begin Annotating", command=lambda: annotate(app, current_file_label))
+    video_button.pack(pady=20)
+
+    # Button to refresh files
+    refresh_button = ctk.CTkButton(app, text="Refresh Files", command=lambda: refresh(current_file_label))
+    refresh_button.pack(pady=20)
+
+    watch_button = ctk.CTkButton(app, text="Watch Annotated Video", command=lambda: watch())
+    watch_button.pack(pady=20)
+
+    # Start the main application loop
+    app.mainloop()
+
+|||||||||||||		File: annotater\controller.py		|||||||||||||
+
+# General imports
+import cv2
+import customtkinter as ctk
+from tkinter import DoubleVar
+
+# TODO : Make seeker faster and in real time
+
+class ControlWindow(ctk.CTkToplevel):
+    def __init__(self, app, file_name, video_player, *args, **kwargs):
+        super().__init__(app, *args, **kwargs)
+        self.video_player = video_player
+        self.title(f"Video Controls: {file_name}")
+        self.control_frame = ctk.CTkFrame(self)
+        self.control_frame.pack(pady=10)
+        
+        self.play_pause_button = ctk.CTkButton(self.control_frame, text="▐▐", command=self.toggle_pause)
+        self.play_pause_button.grid(row=0, column=0, padx=5)
+        
+        self.seek_var = DoubleVar()
+        self.seeker = ctk.CTkSlider(self.control_frame, variable=self.seek_var, from_=0, to=int(self.video_player.cap.get(cv2.CAP_PROP_FRAME_COUNT)), command=self.seek)
+        self.seeker.grid(row=0, column=1, padx=5, sticky="ew")
+
+        self.restart_button = ctk.CTkButton(self.control_frame, text="↺", command=self.restart)
+        self.restart_button.grid(row=0, column=2, padx=5)
+
+        self.stop_button = ctk.CTkButton(self.control_frame, text="■", command=self.stop_annotating)
+        self.stop_button.grid(row=0, column=3, padx=5)
+
+        self.columnconfigure(1, weight=1)
+        self.protocol("WM_DELETE_WINDOW", self.close_control_window)
+        
+        # Make the control window screen topmost
+        self.attributes("-topmost", True)
+
+    def add_to_queue(self, command):
+        self.video_player.command_queue.put(command)
+
+    def toggle_pause(self):
+        self.play_pause_button.configure(text="▶" if self.video_player.paused else "||")
+        self.add_to_queue('pause')
+
+    def seek(self, value):
+        frame_number = int(value)
+        self.add_to_queue(('seek', frame_number))
+        self.seek_var.set(frame_number)
+
+    def restart(self):
+        print("Restarting video")
+        self.add_to_queue('restart')
+        self.play_pause_button.configure(text="▐▐")
+        self.seek_var.set(0)
+
+    def stop_annotating(self):
+        self.close_control_window()
+
+    def close_control_window(self):
+        self.video_player.close_video_player()
+        self.video_player.done_event.set()
+
+|||||||||||||		File: annotater\player.py		|||||||||||||
+# General Imports
+import cv2, os, time, threading, queue
+from tqdm import tqdm
+from tkinter import messagebox
+
+# Local Imports
+from data import Data
+from config import config
+from annotater.controller import ControlWindow
+
+# TODO : add audio callback function
+# TODO: setup audio input
+# TODO : implement draw_annotation later on in seperate dictionary
+
+
+class VideoPlayer:
+    def __init__(self, app, file_name, done_event):
+        
+        # Video Player Objects
+        self.app = app
+        self.cap = None
+        self.done_event = done_event  # Event to signal completion
+
+        # Variables
+        self.file_path, self.file_name = config.in_path, file_name
+        self.cwd, self.out_path = os.getcwd(), config.out_path
+        self._data = None
+        self.last_frame, self.last_frame_idx, self.last_point = None, None, None
+
+        # FLags
+        self.paused, self.drawing = False, False
+
+        # widgets
+        self.control_window, self.control_frame = None, None
+        self.play_pause_button, self.seeker = None, None
+
+        # Queue for thread-safe communication
+        self.command_queue = queue.Queue()
+        
+        # Lock for thread-safe data updates
+        self.lock = threading.Lock()
+
+        # Open the video player
+        # check if file exists
+        if not os.path.exists(f"{self.file_path}\{self.file_name}"):
+            messagebox.showerror("Error", "File not found.")
+            return
+        else:
+            self.cap = cv2.VideoCapture(f"{self.file_path}\{self.file_name}")
+            if not self.cap.isOpened():
+                messagebox.showerror("Error", "Failed to open video file.")
+                return
+            
+        # get last frame and its index
+        self.last_frame_idx = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, self.last_frame_idx)
+        _, self.last_frame = self.cap.read()
+        
+        # reset cap to the first frame
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+
+        self._data = Data(
+            in_path=self.file_path, out_path=self.out_path,
+            name=self.file_name, 
+            frame_width=int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH)), 
+            frame_height=int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), 
+            fps=self.cap.get(cv2.CAP_PROP_FPS), fc=self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        
+        self.frame_delay = int((1 / self._data.FPS) * 1000)
+
+        # set up video player
+        self.video_thread = threading.Thread(target=self.main_loop, daemon=True)
+
+        # Ensure control window is only set up once
+        self.control_window = ControlWindow(self.app, self.file_name, self)
+
+        # Start the video player thread
+        self.video_thread.start()
+
+        # Start the control window
+        self.control_window.mainloop()
+
+    def mouse_callback(self, event, x, y, flags, param):
+        pass
+        # if event == cv2.EVENT_LBUTTONDOWN:
+        #     self.paused = not self.paused
+
+    def main_loop(self):
+        cv2.namedWindow("Video Player")
+        cv2.setMouseCallback("Video Player", self.mouse_callback)
+
+        total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        with tqdm(total=total_frames, desc="Processing Frames") as pbar:
+            while self.cap.isOpened():
+                start_time = time.time()
+
+                curr_frame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+                if curr_frame >= total_frames:
+                    print(f"curr_frame: {curr_frame}, total_frames: {total_frames}")
+                    curr_frame = total_frames - 1
+                
+                # update seeker
+                # self.control_window.seeker.configure(to=curr_frame)
+                self.control_window.seek_var.set(curr_frame)
+
+                # Check for commands
+                try:
+                    command = self.command_queue.get_nowait()
+
+                    if command == 'pause': self.toggle_pause()
+                    elif isinstance(command, tuple) and command[0] == 'seek': self.seek_to_frame(command[1])
+                    elif command == 'restart': self.restart()
+
+                except queue.Empty:
+                    pass
+                
+                # Check for pause
+                if not self.paused:
+                    ret, frame = self.cap.read()
+                    
+                    # TODO : think about ending
+                    if not ret: 
+                        pbar.total += 1
+                        cv2.imshow("Video Player", self.last_frame)
+                        curr_frame = self.last_frame_idx
+                    else:
+                        cv2.imshow("Video Player", frame)
+                else:
+                    pbar.total += 1
+                    self._data.increment_max_frame()
+
+                # add current frame to data
+                self._data.add_curr_frame(curr_frame)
+
+                # Check for key press
+                key = cv2.waitKey(1) & 0xFF
+
+                # Update progress bar
+                pbar.update(1)
+
+                # Update frame delay
+                elapsed_time = time.time() - start_time
+                remaining_time = max(0, self.frame_delay / 1000 - elapsed_time)  # Convert frame_delay to seconds
+                if remaining_time > 0:
+                    time.sleep(remaining_time)
+
+    def toggle_pause(self):
+        self.paused = not self.paused
+
+    def seek_to_frame(self, frame_number):
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
+        self._data.update_curr_frame(frame_number)
+
+    def restart(self):
+        self.seek_to_frame(0)
+
+        # FLags
+        self.paused, self.drawing = False, False
+
+        # reset cap to the first frame
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+
+        # clean data
+        self._data.clean()
+        self._data.update_max_frame(int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT)))
+
+        # clear command queue
+        while not self.command_queue.empty():
+            _ = self.command_queue.get()
+
+    def close_video_player(self):
+        self.cap.release()
+        self._data.save_data()
+        cv2.destroyAllWindows()
+        self.done_event.set()
+        self.video_thread.join(1)
+        self.control_window.quit()
+        self.control_window.destroy()
+        self.app.deiconify()
+        # TODO : close audio stream
+
+    # def on_mouse_click(self, event):
+    #     if event.num == 1 and self.paused:  # Ensure this happens only if the video is paused
+    #         self.drawing = True
+    #         self.last_point = (event.x, event.y)
+    #     elif not self.paused:
+    #         self.drawing = False
+
+    # def on_mouse_move(self, event):
+    #     if self.drawing and self.paused:
+    #         x, y = event.x, event.y
+    #         self._data.add_annotation(((x, y), self.last_point))
+    #         self.last_point = (x, y)
+
+|||||||||||||		File: annotater\setup.py		|||||||||||||
+# General Imports
+import os
+from customtkinter import filedialog
+from tkinter import messagebox
+
+# Local Imports
+from config import config
+
+def file_setup():
+    # get current working directory
+    cwd = os.getcwd()
+    
+    # Select Input Video Directory
+    if not os.path.exists(f"{cwd}\data"): in_path = filedialog.askdirectory(title="Select Input Directory", initialdir=cwd)
+    else: in_path = f"{cwd}\data"
+
+    # Select Output Directory
+    if not os.path.exists(f"{cwd}\out"): out_path = filedialog.askdirectory(title="Select Output Directory", initialdir=cwd)
+    else: out_path = f"{cwd}\out"
+
+    # get list of names all mp4 files in self.file_path
+    in_files = [f for f in os.listdir(in_path) if f.endswith(".mp4")]
+
+    if len(in_files) == 0: 
+        messagebox.showerror("Error", "No MP4 files found in the input directory.")
+    
+    files = config.refetch_files(in_path, out_path)
+
+def change_directory():
+    new_directory = filedialog.askdirectory(title="Select New Directory")
+    if new_directory:
+        os.chdir(new_directory)
+        print(f"Current working directory changed to: {new_directory}")
+        in_path, out_path, files = file_setup()
+        return in_path, out_path, files, new_directory
+

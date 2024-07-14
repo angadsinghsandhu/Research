@@ -1,6 +1,6 @@
-import customtkinter as ctk
-import os
-from PIL import Image, ImageTk
+# General Imports
+import os, customtkinter as ctk
+from PIL import Image
 
 def show_splash(root):
     # FIXME : understand why image is not showing on splash screen

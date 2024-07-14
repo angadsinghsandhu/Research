@@ -1,3 +1,4 @@
+# General Imports
 import os, time
 
 class Config:
@@ -23,6 +24,23 @@ class Config:
     
     def __eq__(self, other):
         return self.cwd == other.cwd and self.in_path == other.in_path and self.out_path == other.out_path and self.files == other.files and self.last_update == other.last_update
+
+    @property
+    def fetch_top_file(self):
+        if len(self.files) == 0:
+            return None
+        return self.files[0]
+    
+    def refetch_files(self, inp=None, out=None):
+        if inp is not None: self.in_path = inp
+        if out is not None: self.out_path = out
+
+        in_path, out_path = self.in_path, self.out_path
+        files = [f for f in os.listdir(in_path) if f.endswith(".mp4")]
+        files = [f for f in files if f"{f}" not in os.listdir(out_path) if f.endswith(".mp4")]
+        # files = [f for f in files if f"{f}_annotated" not in os.listdir(out_path) if f.endswith(".mp4")]
+        self.update(in_path, out_path, files)
+        return files
 
     # Properties with getters and setters
     @property

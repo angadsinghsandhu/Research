@@ -1,12 +1,10 @@
+# General Imports
+import subprocess, cv2, time, json
+import numpy as np
 from functools import lru_cache, cached_property
 from customtkinter import filedialog
 from tkinter import messagebox
-import subprocess, cv2
-import customtkinter as ctk
 from scipy.io.wavfile import write
-import numpy as np
-import time, json, queue
-# from threading import Thread
 
 class Data:
     """
@@ -116,6 +114,8 @@ class Data:
     # METHODS TO ADD DATA
 
     def add_curr_frame(self, frame):
+        if frame >= self.frame_count:
+            print(f"Frame index {frame} is out of range.")
         self.frames.append(frame)
 
     def add_audio_data(self, audio):
@@ -129,8 +129,23 @@ class Data:
 
     # METHODS TO UPDATE DATA
 
+    def update(self, in_path, out_path, name, frame_width, frame_height, fps, fc):
+        self.in_path = in_path
+        self.out_path = out_path
+        self.name = name
+        self.FPS = fps
+        self.frame_count = fc
+        self.frame_width = frame_width
+        self.frame_height = frame_height
+
     def update_curr_frame(self, frame):
         self.curr_frame = frame
+
+    def update_max_frame(self, frame):
+        self.max_frame = frame
+
+    def increment_max_frame(self):
+        self.max_frame += 1
 
     # METHODS TO SAVE DATA
 
@@ -216,3 +231,13 @@ class Data:
 
         except Exception as e:
             print(f"Error saving audio-video-annotation data: {e}")
+
+    # METHODS TO DELETE DATA
+
+    def clean(self):
+        """Function to clean the data object"""
+        self.frames = []
+        self.audio_data = []
+        self.annotations = {}
+        self.curr_frame = 0
+        self.max_frame = 0

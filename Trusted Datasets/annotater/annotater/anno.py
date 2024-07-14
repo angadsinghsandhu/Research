@@ -1,41 +1,31 @@
+# General Imports
 import threading
 import customtkinter as ctk
-from annotater.player import VideoPlayer
-from annotater.setup import file_setup, change_directory, refetch_files
 from tkinter import messagebox
 
-# Global Variables
-in_path, out_path, file_name = None, None, None
-files = []
+# Local Imports
+from annotater.player import VideoPlayer
+from annotater.setup import file_setup, change_directory
+from config import config
 
-def annotate(app):
-    global in_path, out_path, files
-
-    for file_name in files:
-        print(f"Annotating {file_name}")
+def annotate(app, current_file_label):
+    file_name = config.fetch_top_file
+    if not file_name:
+        current_file_label.configure(text="All files have been annotated.")
+    else:
         done_event = threading.Event()
-        VideoPlayer(app, file_name, done_event=done_event)
+        player = VideoPlayer(app, file_name, done_event=done_event)
         done_event.wait()
+        _ = config.refetch_files()
+        current_file_label.configure(text=f"Current File to be Annotated: {config.fetch_top_file}")
 
-    # close the application
-    messagebox.showinfo("Info", "All files have been annotated.")
+def refresh(current_file_label):
+    _ = config.refetch_files()
+    current_file_label.configure(text=f"Current File to be Annotated: {config.fetch_top_file}")
 
-def run(app):
-    global in_path, out_path, files
-
-    # Setup Files
-    in_path, out_path, files = file_setup()
-
-    change_dir_button = ctk.CTkButton(app, text="Change Directory", command=change_directory)
-    change_dir_button.pack(pady=40)
-
-    # Open Video Player Button
-    video_button = ctk.CTkButton(app, text="Begin Annotating", command=lambda: annotate(app))
-    video_button.pack(pady=20)
-
-    # Button to refresh files
-    refresh_button = ctk.CTkButton(app, text="Refresh Files", command=lambda: refetch_files())
-    refresh_button.pack(pady=20)
+def watch():
+    # TODO: add logic to watch video
+    pass
 
 # Functions
 def create_annotater(app):
@@ -48,18 +38,34 @@ def create_annotater(app):
 
     # Set geometry to the full screen
     screen_width = 400
-    screen_height = 200
+    screen_height = 350
     offset = 1/4
     geo = f"{screen_width}x{screen_height}+{offset*screen_width}+{offset*screen_height}"
     # geo = f"{screen_width}x{screen_height}-9-9"
     print(f"Geometry: {geo}")
     app.geometry(geo)
 
-    # update window position
-    app.update()
+    # Setup Files
+    file_setup()
+    
+    # Add a label to the window
+    change_dir_button = ctk.CTkButton(app, text="Change Directory", command=change_directory)
+    change_dir_button.pack(pady=20)
 
-    # Run the main application loop
-    run(app)
+    # Add label for the current file name
+    current_file_label = ctk.CTkLabel(app, text=f"Current File to be Annotated: {config.fetch_top_file}")
+    current_file_label.pack(pady=20)
+
+    # Open Video Player Button
+    video_button = ctk.CTkButton(app, text="Begin Annotating", command=lambda: annotate(app, current_file_label))
+    video_button.pack(pady=20)
+
+    # Button to refresh files
+    refresh_button = ctk.CTkButton(app, text="Refresh Files", command=lambda: refresh(current_file_label))
+    refresh_button.pack(pady=20)
+
+    watch_button = ctk.CTkButton(app, text="Watch Annotated Video", command=lambda: watch())
+    watch_button.pack(pady=20)
 
     # Start the main application loop
     app.mainloop()
