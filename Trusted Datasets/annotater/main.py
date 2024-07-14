@@ -1,6 +1,6 @@
 # imports
 import customtkinter as ctk
-from splash import show_splash
+from splash import Splash
 from annotater.anno import create_annotater
 
 # TODO: Add draw annotations
@@ -22,8 +22,6 @@ if __name__ == "__main__":
     app.withdraw()
 
     # Show splash screen
-    show_splash(app)
+    splash = Splash(app)
 
     create_annotater(app)
-
-    # TODO: Show annotated video
