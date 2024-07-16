@@ -1,12 +1,11 @@
 # General Imports
-import threading, os, json, cv2
+import threading
 import customtkinter as ctk
-from tkinter import filedialog, messagebox
-from imutils.video import FileVideoStream
+from tkinter import filedialog
 
 # Local Imports
 from annotater.setup import file_setup, change_directory
-from annotater.player import VideoPlayer
+from annotater.player import VideoPlayer, AnnotatedPlayer
 from config import config
 
 def annotate(app, current_file_label):
@@ -29,46 +28,7 @@ def watch():
     watch_file = filedialog.askopenfilename(filetypes=[("MP4 files", "*.mp4")], title="Select a file to watch", initialdir=config.out_path)
     meta_file = watch_file.replace("_annotated.mp4", "_annotated.json")
 
-    if not os.path.exists(watch_file):
-        messagebox.showerror("Error", "File not found.")
-        return
-
-    if not os.path.exists(meta_file):
-        messagebox.showerror("Error", "File metadata not found.")
-        return
-    
-    # json file
-    # example: { "223": ["start", [339, 39]], "234": ["move", [182, 201]], "235": ["move", [180, 202]], "245": ["end", [180, 202]], "metadata": { "video_name": "zhusky.mp4", "frame_rate": 30, "frame_count": 10225, "frame_width": 640, "frame_height": 360, "sample_rate": 44100, "channels": 2 }}
-    meta = json.load(open(meta_file, "r"))
-
-    # open video player and display annotations
-    vs = FileVideoStream('result.mp4').start()
-    # time.sleep(0.2)
-
-    print("Playing video...")
-
-    while vs.more():
-        frame = vs.read()
-        if frame is None:
-            break
-
-        frame_number = int(vs.stream.get(cv2.CAP_PROP_POS_FRAMES))
-        if str(frame_number) in meta:
-            action, point = meta[str(frame_number)]
-            if action == "start":
-                cv2.circle(frame, tuple(point), 5, (0, 0, 255), -1)
-            elif action == "move":
-                cv2.circle(frame, tuple(point), 5, (0, 255, 0), -1)
-            elif action == "end":
-                cv2.circle(frame, tuple(point), 5, (255, 0, 0), -1)
-
-        cv2.imshow("Annotated Video", frame)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    cv2.destroyAllWindows()
-    vs.stop()
+    annoPlayer = AnnotatedPlayer(watch_file, meta_file)
 
 # Functions
 def create_annotater(app):

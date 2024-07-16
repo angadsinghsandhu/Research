@@ -100,7 +100,7 @@ class Data:
             return None
         return self.get_annotation(max(self.annotations.keys()))
     
-    @cached_property
+    @property
     def get_max_frames(self):
         return self.max_frames
     

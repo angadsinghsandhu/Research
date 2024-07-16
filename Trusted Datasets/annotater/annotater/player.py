@@ -1,8 +1,9 @@
 # General Imports
-import cv2, os, time as t, threading, queue
+import cv2, os, threading, queue, json, time
 from tqdm import tqdm
 from tkinter import messagebox
-import sounddevice as sd
+import sounddevice as sd, time as t
+from ffpyplayer.player import MediaPlayer
 
 # Local Imports
 from data import Data
@@ -26,7 +27,7 @@ class VideoPlayer:
 
         # FLags
         self.paused, self.drawing = False, False
-        self.start_counter = None
+        self.start_counter, self.pause_frame = None, None
 
         # widgets
         self.control_window, self.control_frame = None, None
@@ -53,7 +54,7 @@ class VideoPlayer:
         self.last_frame_idx = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, self.last_frame_idx)
         _, self.last_frame = self.cap.read()
-        self.last_frame_idx = None
+        self.last_frame_idx, self.curr_frame_idx = None, None
         
         # reset cap to the first frame
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -88,6 +89,12 @@ class VideoPlayer:
         # Start the control window
         self.control_window.mainloop()
 
+    def audio_callback(self, indata, frames, time, status):
+        if self.start_counter is None:
+            self.start_counter = t.perf_counter()
+        timestamp = t.perf_counter() - self.start_counter
+        self._data.add_audio_data(timestamp, indata.copy())
+
     def mouse_callback(self, event, x, y, flags, param):
         if event == cv2.EVENT_LBUTTONDOWN and not self.drawing:
             self.drawing = True
@@ -98,29 +105,37 @@ class VideoPlayer:
             self.drawing = False
             self._data.add_annotation("end", (x, y))
 
-    def audio_callback(self, indata, frames, time, status):
-        if self.start_counter is None:
-            self.start_counter = t.perf_counter()
-        timestamp = t.perf_counter() - self.start_counter
-        self._data.add_audio_data(timestamp, indata.copy())
+    def draw_annotations(self):
+        """Draw annotations on the given frame based on the frame index."""
+        _annotation = self._data.get_last_annotation()
+        largest_key = max(self._data.annotations.keys())
+        if _annotation is not None and abs(largest_key - self._data.get_frames_length) <= 5:
+            command, (x, y) = _annotation
+            if command == "start":
+                self.start_point = (x, y)
+            elif command == "move":
+                cv2.line(self.frame, self.start_point, (x, y), (0, 0, 255), 3)
+                self.start_point = (x, y)
+            elif command == "end":
+                cv2.line(self.frame, self.start_point, (x, y), (0, 0, 255), 3)
+                self.start_point = None
+                self.drawing = False
 
     def main_loop(self):
         cv2.namedWindow("Video Player")
         cv2.setMouseCallback("Video Player", self.mouse_callback)
-        # cv2.positio
 
         total_frames = self._data.get_max_frames
-
         self.start_counter = t.perf_counter()  # Start high-resolution timer
 
-        # # start audio stream
+        # start audio stream
         with sd.InputStream(samplerate=self.samplerate, channels=self.channels, callback=self.audio_callback):
             with tqdm(total=total_frames, desc="Processing Frames") as self.pbar:
                 while self.cap.isOpened():
                     start_time = t.time()
                     current_counter = t.perf_counter() - self.start_counter
 
-                    curr_frame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+                    self.curr_frame_idx = curr_frame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
                     if curr_frame >= total_frames: curr_frame = total_frames - 1
                     
                     # update seeker
@@ -142,30 +157,17 @@ class VideoPlayer:
                         self.ret, self.frame = self.cap.read()
                         if not self.ret: 
                             self.pbar.total += 1
-                            self.frame = self.last_frame
-                        
-                        # Draw annotations
-                        if self.drawing:
-                            _annotation = self._data.get_last_annotation()
-                            largest_key = max(self._data.annotations.keys())
-                            if _annotation is not None and abs(largest_key - curr_frame) <= 5:
-                                command, (x, y) = _annotation
-                                if command == "start":
-                                    self.start_point = (x, y)
-                                elif command == "move":
-                                    cv2.line(self.frame, self.start_point, (x, y), (0, 0, 255), 3)
-                                    self.start_point = (x, y)
-                                elif command == "end":
-                                    cv2.line(self.frame, self.start_point, (x, y), (0, 0, 255), 3)
-                                    self.start_point = None
-                                    self.drawing = False
-
-                        # Display the frame
-                        cv2.imshow("Video Player", self.frame)
-                        
+                            self.frame = self.last_frame.copy()
+                        self.pause_frame = self.frame.copy()
                     else:
+                        self.frame = self.pause_frame.copy()
                         self.pbar.total += 1
                         self._data.increment_max_frame()
+
+                    if self.drawing: self.draw_annotations()
+
+                    # Display the frame
+                    cv2.imshow("Video Player", self.frame)
 
                     # add current frame to data
                     self._data.add_curr_frame(current_counter, curr_frame)
@@ -189,6 +191,7 @@ class VideoPlayer:
     def seek(self, frame_number):
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
         self._data.update_curr_frame(frame_number)
+        self.curr_frame_idx = frame_number
 
     def restart(self):
         # Reset the video player
@@ -235,3 +238,73 @@ class VideoPlayer:
         self.control_window.quit()
         self.control_window.destroy()
         self.app.deiconify()
+
+class AnnotatedPlayer:
+    def __init__(self, watch_file, meta_file):
+        self.watch_file = watch_file
+        self.meta_file = meta_file
+
+        if not os.path.exists(watch_file):
+            messagebox.showerror("Error", "File not found.")
+            return
+        else:
+            self.cap = cv2.VideoCapture(watch_file)
+            if not self.cap.isOpened():
+                messagebox.showerror("Error", "Failed to open video file.")
+                return
+
+        if not os.path.exists(meta_file):
+            messagebox.showerror("Error", "File metadata not found.")
+            return
+        else:
+            self.meta = json.load(open(meta_file, "r"))
+
+        self.player  = MediaPlayer(watch_file)
+        self.audio_on = True
+
+        self.start_time = None
+        self.last_point = None
+
+        self.total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.frame_rate = self.meta['metadata']['frame_rate']
+        self.frame_delay = int((1 / self.frame_rate) * 1000)
+
+        self.show()
+
+    def show(self):
+        # open video player and display annotations
+        cv2.namedWindow("Annotater Player")
+
+        while self.cap.isOpened():
+            ret, frame = self.cap.read()
+            if self.audio_on: audio_frame, val = self.player.get_frame()
+            
+            if ret:
+                frame_number = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+                print(f"Frame Number: {frame_number}")
+                if str(frame_number) in self.meta:
+                    action, point = self.meta[str(frame_number)]
+                    if action == "start":
+                        self.last_point = tuple(point)
+                    elif action == "move":
+                        cv2.line(frame, self.last_point, tuple(point), (0, 0, 255), 3)
+                        self.last_point = tuple(point)
+                    elif action == "end":
+                        cv2.line(frame, self.last_point, tuple(point), (0, 0, 255), 3)
+                        self.last_point = None
+
+                if self.audio_on and val != 'eof' and audio_frame is not None: _, t = audio_frame
+                elif val == 'eof': 
+                    self.audio_on = False
+                    continue
+
+                cv2.imshow("Annotater Player", frame)
+                if cv2.waitKey(self.frame_delay) & 0xFF == ord('q'): break
+            else: break
+
+        self.close()
+
+    def close(self):
+        self.cap.release()
+        self.player.close_player()
+        cv2.destroyAllWindows()

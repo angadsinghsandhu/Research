@@ -114,7 +114,7 @@ config = Config()
 
 |||||||||||||		File: data.py		|||||||||||||
 # General Imports
-import subprocess, cv2, json, os
+import subprocess, cv2, json, os, threading, queue
 import numpy as np
 from functools import lru_cache, cached_property
 from customtkinter import filedialog
@@ -314,8 +314,6 @@ class Data:
 
         """Combines all audio data into a single array, removing audio during video gaps."""
         video_gaps = self.identify_video_gaps()
-
-        print(f"Video Gaps: {video_gaps}")
         
         synced_audio = []
         current_audio_index = 0
@@ -335,9 +333,6 @@ class Data:
             synced_audio.append(self.audio_data[current_audio_index][1])
             current_audio_index += 1
 
-        print(f"Original Audio Frames: {len(self.audio_data)}, Synced: {len(synced_audio)}")
-        print(f"Saving audio data at {self.audio_path}")
-
         if synced_audio:
             combined_audio = np.concatenate(synced_audio, axis=0)
             return combined_audio
@@ -347,7 +342,7 @@ class Data:
 
     # METHODS TO SAVE DATA
 
-    def process_video_data(self):
+    def process_video_data(self, progress=None):
         if not self.frames:
             messagebox.showerror("Error", "No frames to save.")
             return
@@ -386,27 +381,28 @@ class Data:
         out = cv2.VideoWriter(self.out_file_path, fourcc, self.frame_rate, (self.frame_width, self.frame_height))
 
         # Write frames to the output video in the specified order
-        print(f"Writing {len(self.frames)} frames to {self.out_file_path}")
+        last_index = len(self.frames) - 1
         for timestamp, index in self.frames:
             if index < len(vid):
                 out.write(vid[index])
+                if progress: progress.update_video_progress(index / last_index)
             else:
                 print(f"Warning: Frame index {index} is out of range.")
-        print(f"Video saved to {self.out_file_path}")
 
-    def process_audio_data(self):
+    def process_audio_data(self, progress=None):
         # Check if audio data and annotations are present
         if len(self.audio_data) > 0:
             write(self.audio_path, self.sample_rate, self.combined_audio())
-
             # TODO : add a logger
+            if progress: progress.update_audio_progress(1.0)
         else:
             print("No audio data to save")
 
-    def save_av_and_clean(self):
+    def save_av_and_clean(self, progress=None):
         """Merge audio and video data using FFmpeg"""
         subprocess.run([
             'ffmpeg',
+            '-hide_banner',
             '-y',
             '-i', self.out_file_path,
             '-i', self.audio_path,
@@ -416,13 +412,15 @@ class Data:
             self.out_file_path.replace('.mp4', '_annotated.mp4')
         ])
 
+        if progress: progress.update_av_progress(1.0)
+
         # delete the audio and video data at self.out_file_path and self.audio_path
         if os.path.exists(self.out_file_path):
             os.remove(self.out_file_path)
         if os.path.exists(self.audio_path):
             os.remove(self.audio_path)  
 
-    def save_annotations(self):
+    def save_annotations(self, progress=None):
         # add metadata to the annotations file
         self.annotations["metadata"] = {
             "video_name": self.name,
@@ -438,9 +436,10 @@ class Data:
         try:
             with open(self.out_file_path.replace('.mp4', '_annotated.json'), "w") as file:
                 json.dump(self.annotations, file)
+
+            if progress: progress.update_json_progress(1.0)
         except Exception as e:
             print(f"Error saving annotations: {e}")
-
 
     def save_data(self, app):
         """Function to save video and audio, and merge them using FFmpeg"""
@@ -448,28 +447,23 @@ class Data:
             self.out_path = filedialog.askdirectory(filetypes=[("MP4 files", "*.mp4")])
 
         # Create progress window
-        progress = SaveProgress(app)
-        progress.mainloop()
-        progress.reset()
+        progress = SaveProgress(app, self.name)
+        progress.update()
 
         # Save video data
-        self.process_video_data()
-        progress.update_video_progress(1.0)
+        self.process_video_data(progress=progress)
 
         # Save audio data
-        self.process_audio_data()
-        progress.update_audio_progress(1.0)
+        self.process_audio_data(progress=progress)
 
         # Cleanup
-        self.save_av_and_clean()
-        progress.update_av_progress(1.0)
+        self.save_av_and_clean(progress=progress)
 
         # Save annotations
-        self.save_annotations()
-        progress.update_json_progress(1.0)
+        self.save_annotations(progress=progress)
 
-        progress.destroy_save_progress()
-
+        # update progress window title
+        progress.update_title_on_save()
 
     # METHODS TO DELETE DATA
 
@@ -595,13 +589,15 @@ class Splash(ctk.CTkToplevel):
 
 
 class SaveProgress(ctk.CTkToplevel):
-    def __init__(self, root):
+    def __init__(self, root, name):
         super().__init__(root)
         self.root = root
+        self.name = name
         self.create_save_progress()
+        self.protocol("WM_DELETE_WINDOW", self.destroy_save_progress)
 
     def create_save_progress(self):
-        self.title("Saving Progress...")
+        self.title(f"{self.name}: Saving Progress...")
         self.geometry("400x250")
         self.attributes("-topmost", True)
 
@@ -629,6 +625,12 @@ class SaveProgress(ctk.CTkToplevel):
         self.json_progress_label = ctk.CTkLabel(self, text="JSON Data Save Progress...")
         self.json_progress_label.pack(pady=5)
 
+        # reset progress bars
+        self.reset()
+
+    def update_title_on_save(self):
+        self.title(f"{self.name}: Progress Saved!!!")
+
     def update_video_progress(self, value):
         self.video_progress.set(value)
 
@@ -642,6 +644,7 @@ class SaveProgress(ctk.CTkToplevel):
         self.json_progress.set(value)
 
     def reset(self):
+        self.title(f"{self.name}: Saving Progress...")
         self.update_video_progress(0.0)
         self.update_audio_progress(0.0)
         self.update_av_progress(0.0)
@@ -655,14 +658,13 @@ class SaveProgress(ctk.CTkToplevel):
 
 |||||||||||||		File: annotater\anno.py		|||||||||||||
 # General Imports
-import threading, os, json, cv2
+import threading
 import customtkinter as ctk
-from tkinter import filedialog, messagebox
-from imutils.video import FileVideoStream
+from tkinter import filedialog
 
 # Local Imports
 from annotater.setup import file_setup, change_directory
-from annotater.player import VideoPlayer
+from annotater.player import VideoPlayer, AnnotatedPlayer
 from config import config
 
 def annotate(app, current_file_label):
@@ -685,44 +687,7 @@ def watch():
     watch_file = filedialog.askopenfilename(filetypes=[("MP4 files", "*.mp4")], title="Select a file to watch", initialdir=config.out_path)
     meta_file = watch_file.replace("_annotated.mp4", "_annotated.json")
 
-    if not os.path.exists(watch_file):
-        messagebox.showerror("Error", "File not found.")
-        return
-
-    if not os.path.exists(meta_file):
-        messagebox.showerror("Error", "File metadata not found.")
-        return
-    
-    # json file
-    # example: { "223": ["start", [339, 39]], "234": ["move", [182, 201]], "235": ["move", [180, 202]], "245": ["end", [180, 202]], "metadata": { "video_name": "zhusky.mp4", "frame_rate": 30, "frame_count": 10225, "frame_width": 640, "frame_height": 360, "sample_rate": 44100, "channels": 2 }}
-    meta = json.load(open(meta_file, "r"))
-
-    # open video player and display annotations
-    vs = FileVideoStream('result.mp4').start()
-    # time.sleep(0.2)
-
-    while vs.more():
-        frame = vs.read()
-        if frame is None:
-            break
-
-        frame_number = int(vs.stream.get(cv2.CAP_PROP_POS_FRAMES))
-        if str(frame_number) in meta:
-            action, point = meta[str(frame_number)]
-            if action == "start":
-                cv2.circle(frame, tuple(point), 5, (0, 0, 255), -1)
-            elif action == "move":
-                cv2.circle(frame, tuple(point), 5, (0, 255, 0), -1)
-            elif action == "end":
-                cv2.circle(frame, tuple(point), 5, (255, 0, 0), -1)
-
-        cv2.imshow("Annotated Video", frame)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    cv2.destroyAllWindows()
-    vs.stop()
+    annoPlayer = AnnotatedPlayer(watch_file, meta_file)
 
 # Functions
 def create_annotater(app):
@@ -819,6 +784,7 @@ class ControlWindow(ctk.CTkToplevel):
         self.seek_var.set(0)
 
     def save_and_close(self):
+        self.attributes("-topmost", False)
         self.video_player.close(save=True)
         self.video_player.done_event.set()
 
@@ -828,7 +794,7 @@ class ControlWindow(ctk.CTkToplevel):
 
 |||||||||||||		File: annotater\player.py		|||||||||||||
 # General Imports
-import cv2, os, time as t, threading, queue
+import cv2, os, time as t, threading, queue, json
 from tqdm import tqdm
 from tkinter import messagebox
 import sounddevice as sd
@@ -972,29 +938,28 @@ class VideoPlayer:
                         if not self.ret: 
                             self.pbar.total += 1
                             self.frame = self.last_frame
-                        
-                        # Draw annotations
-                        if self.drawing:
-                            _annotation = self._data.get_last_annotation()
-                            largest_key = max(self._data.annotations.keys())
-                            if _annotation is not None and abs(largest_key - curr_frame) <= 5:
-                                command, (x, y) = _annotation
-                                if command == "start":
-                                    self.start_point = (x, y)
-                                elif command == "move":
-                                    cv2.line(self.frame, self.start_point, (x, y), (0, 0, 255), 3)
-                                    self.start_point = (x, y)
-                                elif command == "end":
-                                    cv2.line(self.frame, self.start_point, (x, y), (0, 0, 255), 3)
-                                    self.start_point = None
-                                    self.drawing = False
-
-                        # Display the frame
-                        cv2.imshow("Video Player", self.frame)
-                        
                     else:
                         self.pbar.total += 1
                         self._data.increment_max_frame()
+
+                    # Draw annotations
+                    if self.drawing:
+                        _annotation = self._data.get_last_annotation()
+                        largest_key = max(self._data.annotations.keys())
+                        if _annotation is not None and abs(largest_key - curr_frame) <= 5:
+                            command, (x, y) = _annotation
+                            if command == "start":
+                                self.start_point = (x, y)
+                            elif command == "move":
+                                cv2.line(self.frame, self.start_point, (x, y), (0, 0, 255), 3)
+                                self.start_point = (x, y)
+                            elif command == "end":
+                                cv2.line(self.frame, self.start_point, (x, y), (0, 0, 255), 3)
+                                self.start_point = None
+                                self.drawing = False
+
+                    # Display the frame
+                    cv2.imshow("Video Player", self.frame)
 
                     # add current frame to data
                     self._data.add_curr_frame(current_counter, curr_frame)
@@ -1064,6 +1029,68 @@ class VideoPlayer:
         self.control_window.quit()
         self.control_window.destroy()
         self.app.deiconify()
+
+class AnnotatedPlayer:
+    def __init__(self, watch_file, meta_file):
+        self.watch_file = watch_file
+        self.meta_file = meta_file
+
+        if not os.path.exists(watch_file):
+            messagebox.showerror("Error", "File not found.")
+            return
+        else:
+            self.cap = cv2.VideoCapture(watch_file)
+            if not self.cap.isOpened():
+                messagebox.showerror("Error", "Failed to open video file.")
+                return
+
+        if not os.path.exists(meta_file):
+            messagebox.showerror("Error", "File metadata not found.")
+            return
+        else:
+            # example: { "223": ["start", [339, 39]], "234": ["move", [182, 201]], "235": ["move", [180, 202]], "245": ["end", [180, 202]], "metadata": { "video_name": "zhusky.mp4", "frame_rate": 30, "frame_count": 10225, "frame_width": 640, "frame_height": 360, "sample_rate": 44100, "channels": 2 }}
+            self.meta = json.load(open(meta_file, "r"))
+
+        self.last_point = None
+        self.total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+        self.show()
+
+    def show(self):
+        # open video player and display annotations
+        cv2.namedWindow("Annotater Player")
+        
+        print(f"Total Frames: {self.total_frames} == {self.meta['metadata']['frame_count']}")
+        frame_rate = self.meta['metadata']['frame_rate']
+        frame_delay = int(1000 / frame_rate)  # Delay in milliseconds
+
+        while self.cap.isOpened():
+            ret, frame = self.cap.read()
+            if ret:
+                frame_number = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+                if str(frame_number) in self.meta:
+                    action, point = self.meta[str(frame_number)]
+                    if action == "start":
+                        self.last_point = tuple(point)
+                    elif action == "move":
+                        cv2.line(frame, self.last_point, tuple(point), (0, 0, 255), 3)
+                        self.last_point = tuple(point)
+                    elif action == "end":
+                        cv2.line(frame, self.last_point, tuple(point), (0, 0, 255), 3)
+                        self.last_point = None
+
+                cv2.imshow("Annotater Player", frame)
+
+                if cv2.waitKey(frame_delay) & 0xFF == ord('q'):
+                    break
+            else:
+                break
+
+        self.cap.release()
+
+    def close(self):
+        self.cap.release()
+        cv2.destroyAllWindows()
 
 |||||||||||||		File: annotater\setup.py		|||||||||||||
 # General Imports
