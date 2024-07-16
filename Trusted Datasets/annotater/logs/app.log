@@ -7481,3 +7481,84 @@ TypeError: can only concatenate str (not "int") to str
 [2024-07-16 19:09:27,206]-(Line 86 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Config updated with in_path=D:\Code\Research\Trusted Datasets\annotater\data, out_path=D:\Code\Research\Trusted Datasets\annotater\out
 [2024-07-16 19:09:27,207]-(Line 171 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Refetched files: ['zhusky.mp4']
 [2024-07-16 19:09:27,210]-(Line 36 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Annotation completed for file: zhusky.mp4
+[2024-07-16 19:09:33,172]-(Line 17 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Initializing Splash screen
+[2024-07-16 19:09:35,430]-(Line 37 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Splash screen centered at position: 732, 283
+[2024-07-16 19:09:35,452]-(Line 47 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Original Image Size: 1330x855
+[2024-07-16 19:09:35,490]-(Line 55 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Resized Image Size: 340x219
+[2024-07-16 19:09:35,568]-(Line 76 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Splash screen layout created
+[2024-07-16 19:09:35,569]-(Line 81 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Countdown updated to 4 seconds
+[2024-07-16 19:09:35,570]-(Line 63 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Creating annotater
+[2024-07-16 19:09:35,575]-(Line 70 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:DEBUG} : Default styling options set
+[2024-07-16 19:09:36,974]-(Line 81 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Countdown updated to 3 seconds
+[2024-07-16 19:09:37,979]-(Line 81 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Countdown updated to 2 seconds
+[2024-07-16 19:09:38,985]-(Line 81 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Countdown updated to 1 seconds
+[2024-07-16 19:09:40,133]-(Line 93 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:INFO} : Countdown finished, destroying splash screen, showing main window
+[2024-07-16 19:09:41,558]-(Line 106 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Starting file setup
+[2024-07-16 19:09:41,559]-(Line 57 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Setting Current Working Directory: D:\Code\Research\Trusted Datasets\annotater
+[2024-07-16 19:09:41,560]-(Line 110 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Current working directory: D:\Code\Research\Trusted Datasets\annotater
+[2024-07-16 19:09:41,560]-(Line 62 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Setting input folder path to: D:\Code\Research\Trusted Datasets\annotater\data
+[2024-07-16 19:09:41,561]-(Line 119 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Default input directory used: D:\Code\Research\Trusted Datasets\annotater\data
+[2024-07-16 19:09:41,562]-(Line 67 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Setting output folder path to: D:\Code\Research\Trusted Datasets\annotater\out
+[2024-07-16 19:09:41,562]-(Line 128 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Default output directory used: D:\Code\Research\Trusted Datasets\annotater\out
+[2024-07-16 19:09:41,563]-(Line 132 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Found 2 MP4 files in the input directory
+[2024-07-16 19:09:41,564]-(Line 153 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Removing extensions from file 'timer.mp4'
+[2024-07-16 19:09:41,565]-(Line 153 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Removing extensions from file 'zhusky.mp4'
+[2024-07-16 19:09:41,565]-(Line 153 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Removing extensions from file 'timer_annotated.mp4'
+[2024-07-16 19:09:41,566]-(Line 86 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Config updated with in_path=D:\Code\Research\Trusted Datasets\annotater\data, out_path=D:\Code\Research\Trusted Datasets\annotater\out
+[2024-07-16 19:09:41,568]-(Line 171 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Refetched files: ['zhusky.mp4']
+[2024-07-16 19:09:41,569]-(Line 79 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : File setup completed
+[2024-07-16 19:09:41,675]-(Line 100 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Annotater UI setup completed
+[2024-07-16 19:09:46,938]-(Line 28 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Starting annotation for file: zhusky.mp4
+[2024-07-16 19:09:46,957]-(Line 64 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:INFO} : Video file opened: zhusky.mp4
+[2024-07-16 19:09:47,028]-(Line 85 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : | Data Object Created for ==> zhusky.mp4 | Input Path ==> D:\Code\Research\Trusted Datasets\annotater\data | Output Path ==> D:\Code\Research\Trusted Datasets\annotater\out | Name ==> zhusky.mp4 | FPS ==> 30 | Frame Count ==> 10225 | Frame Width ==> 640 | Frame Height ==> 360 | Sample Rate ==> 44100 | Channels ==> 2 |
+[2024-07-16 19:09:47,030]-(Line 60 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Data object for zhusky.mp4 initialized
+[2024-07-16 19:09:48,365]-(Line 47 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Control window configuration completed for file: zhusky.mp4
+[2024-07-16 19:09:48,367]-(Line 100 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:INFO} : VideoPlayer initialized with frame delay: 33 ms
+[2024-07-16 19:09:56,042]-(Line 51 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:DEBUG} : Added command to queue: pause
+[2024-07-16 19:09:56,043]-(Line 56 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Toggled pause state to True
+[2024-07-16 19:09:57,320]-(Line 51 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:DEBUG} : Added command to queue: pause
+[2024-07-16 19:09:57,332]-(Line 56 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Toggled pause state to False
+[2024-07-16 19:10:03,840]-(Line 51 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:DEBUG} : Added command to queue: ('seek', 8867)
+[2024-07-16 19:10:03,850]-(Line 62 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Seeked to frame number: 8867
+[2024-07-16 19:10:05,965]-(Line 51 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:DEBUG} : Added command to queue: ('seek', 2797)
+[2024-07-16 19:10:05,978]-(Line 62 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Seeked to frame number: 2797
+[2024-07-16 19:10:10,554]-(Line 51 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:DEBUG} : Added command to queue: restart
+[2024-07-16 19:10:10,564]-(Line 68 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Restarted video
+[2024-07-16 19:10:10,578]-(Line 376 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Data object cleaned
+[2024-07-16 19:10:10,579]-(Line 180 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Data() updated for zhusky.mp4: in_path=D:\Code\Research\Trusted Datasets\annotater\data, out_path=D:\Code\Research\Trusted Datasets\annotater\out, frame_width=640, frame_height=360
+[2024-07-16 19:10:10,580]-(Line 248 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:INFO} : Command queue cleared and video restarted
+[2024-07-16 19:10:12,779]-(Line 51 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:DEBUG} : Added command to queue: ('seek', 5071)
+[2024-07-16 19:10:12,785]-(Line 62 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Seeked to frame number: 5071
+[2024-07-16 19:10:13,734]-(Line 51 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:DEBUG} : Added command to queue: ('seek', 8425)
+[2024-07-16 19:10:13,742]-(Line 62 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Seeked to frame number: 8425
+[2024-07-16 19:10:14,569]-(Line 51 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:DEBUG} : Added command to queue: ('seek', 4106)
+[2024-07-16 19:10:14,573]-(Line 62 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Seeked to frame number: 4106
+[2024-07-16 19:10:16,575]-(Line 51 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:DEBUG} : Added command to queue: ('seek', 2879)
+[2024-07-16 19:10:16,579]-(Line 62 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Seeked to frame number: 2879
+[2024-07-16 19:10:17,717]-(Line 51 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:DEBUG} : Added command to queue: ('seek', 5398)
+[2024-07-16 19:10:17,721]-(Line 62 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Seeked to frame number: 5398
+[2024-07-16 19:10:18,718]-(Line 51 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:DEBUG} : Added command to queue: ('seek', 8638)
+[2024-07-16 19:10:18,722]-(Line 62 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Seeked to frame number: 8638
+[2024-07-16 19:10:21,301]-(Line 216 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:INFO} : Video processing completed
+[2024-07-16 19:10:21,304]-(Line 345 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Saving data for zhusky.mp4 to D:\Code\Research\Trusted Datasets\annotater\out
+[2024-07-16 19:10:21,316]-(Line 100 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Initializing SaveProgress window for zhusky.mp4
+[2024-07-16 19:10:21,350]-(Line 159 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Progress bars reset for zhusky.mp4
+[2024-07-16 19:10:21,351]-(Line 135 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : SaveProgress window layout created
+[2024-07-16 19:10:30,407]-(Line 284 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Video data processed and saved to D:\Code\Research\Trusted Datasets\annotater\out\zhusky.mp4
+[2024-07-16 19:10:31,007]-(Line 227 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Combined audio data successfully
+[2024-07-16 19:10:31,028]-(Line 290 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Audio data saved to D:\Code\Research\Trusted Datasets\annotater\out\zhusky.wav
+[2024-07-16 19:10:31,653]-(Line 309 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Audio and video merged and saved to D:\Code\Research\Trusted Datasets\annotater\out\zhusky_annotated.mp4
+[2024-07-16 19:10:31,655]-(Line 314 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Deleted temporary video file D:\Code\Research\Trusted Datasets\annotater\out\zhusky.mp4
+[2024-07-16 19:10:31,656]-(Line 317 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Deleted temporary audio file D:\Code\Research\Trusted Datasets\annotater\out\zhusky.wav
+[2024-07-16 19:10:31,660]-(Line 337 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Annotations saved to D:\Code\Research\Trusted Datasets\annotater\out\zhusky_annotated.json
+[2024-07-16 19:10:31,661]-(Line 139 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:INFO} : Annotations saved for zhusky.mp4
+[2024-07-16 19:10:31,663]-(Line 365 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Data for zhusky.mp4 saved successfully
+[2024-07-16 19:10:31,728]-(Line 269 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:INFO} : VideoPlayer closed
+[2024-07-16 19:10:31,729]-(Line 74 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Saved and closed the video player
+[2024-07-16 19:10:31,730]-(Line 153 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Removing extensions from file 'timer.mp4'
+[2024-07-16 19:10:31,731]-(Line 153 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Removing extensions from file 'zhusky.mp4'
+[2024-07-16 19:10:31,732]-(Line 153 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Removing extensions from file 'timer_annotated.mp4'
+[2024-07-16 19:10:31,732]-(Line 153 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Removing extensions from file 'zhusky_annotated.mp4'
+[2024-07-16 19:10:31,733]-(Line 86 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Config updated with in_path=D:\Code\Research\Trusted Datasets\annotater\data, out_path=D:\Code\Research\Trusted Datasets\annotater\out
+[2024-07-16 19:10:31,735]-(Line 171 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Refetched files: []
+[2024-07-16 19:10:31,738]-(Line 36 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Annotation completed for file: zhusky.mp4

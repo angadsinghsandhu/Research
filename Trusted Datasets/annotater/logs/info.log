@@ -1335,3 +1335,42 @@ app - INFO - Closed the video player
 app - INFO - Config updated with in_path=D:\Code\Research\Trusted Datasets\annotater\data, out_path=D:\Code\Research\Trusted Datasets\annotater\out
 app - INFO - Refetched files: ['zhusky.mp4']
 app - INFO - Annotation completed for file: zhusky.mp4
+app - INFO - Creating annotater
+app - INFO - Countdown finished, destroying splash screen, showing main window
+app - INFO - Starting file setup
+app - INFO - Found 2 MP4 files in the input directory
+app - INFO - Config updated with in_path=D:\Code\Research\Trusted Datasets\annotater\data, out_path=D:\Code\Research\Trusted Datasets\annotater\out
+app - INFO - Refetched files: ['zhusky.mp4']
+app - INFO - File setup completed
+app - INFO - Annotater UI setup completed
+app - INFO - Starting annotation for file: zhusky.mp4
+app - INFO - Video file opened: zhusky.mp4
+app - INFO - Data object for zhusky.mp4 initialized
+app - INFO - Control window configuration completed for file: zhusky.mp4
+app - INFO - VideoPlayer initialized with frame delay: 33 ms
+app - INFO - Toggled pause state to True
+app - INFO - Toggled pause state to False
+app - INFO - Seeked to frame number: 8867
+app - INFO - Seeked to frame number: 2797
+app - INFO - Restarted video
+app - INFO - Data() updated for zhusky.mp4: in_path=D:\Code\Research\Trusted Datasets\annotater\data, out_path=D:\Code\Research\Trusted Datasets\annotater\out, frame_width=640, frame_height=360
+app - INFO - Command queue cleared and video restarted
+app - INFO - Seeked to frame number: 5071
+app - INFO - Seeked to frame number: 8425
+app - INFO - Seeked to frame number: 4106
+app - INFO - Seeked to frame number: 2879
+app - INFO - Seeked to frame number: 5398
+app - INFO - Seeked to frame number: 8638
+app - INFO - Video processing completed
+app - INFO - Saving data for zhusky.mp4 to D:\Code\Research\Trusted Datasets\annotater\out
+app - INFO - Video data processed and saved to D:\Code\Research\Trusted Datasets\annotater\out\zhusky.mp4
+app - INFO - Audio data saved to D:\Code\Research\Trusted Datasets\annotater\out\zhusky.wav
+app - INFO - Audio and video merged and saved to D:\Code\Research\Trusted Datasets\annotater\out\zhusky_annotated.mp4
+app - INFO - Annotations saved to D:\Code\Research\Trusted Datasets\annotater\out\zhusky_annotated.json
+app - INFO - Annotations saved for zhusky.mp4
+app - INFO - Data for zhusky.mp4 saved successfully
+app - INFO - VideoPlayer closed
+app - INFO - Saved and closed the video player
+app - INFO - Config updated with in_path=D:\Code\Research\Trusted Datasets\annotater\data, out_path=D:\Code\Research\Trusted Datasets\annotater\out
+app - INFO - Refetched files: []
+app - INFO - Annotation completed for file: zhusky.mp4
