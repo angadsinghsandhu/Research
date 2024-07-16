@@ -2,7 +2,7 @@ DIRECTORY STRUCTURE: .
 +f	config.py
 +f	data.py
 +f	main.py
-+f	splash.py
++f	screens.py
 +d	annotater
 ++f		anno.py
 ++f		controller.py
@@ -18,12 +18,13 @@ FILE CONTENTS:
 import os, time
 
 class Config:
-    def __init__(self, cwd=None, in_path=None, out_path=None, files=[]):
+    def __init__(self, cwd=None, in_path=None, out_path=None, files=[], extension=".mp4"):
         self._cwd = cwd
         self._in_path = in_path
         self._out_path = out_path
         self._files = files
         self._last_update = time.time()
+        self.extension = extension
 
     def update(self, in_path=None, out_path=None, files=[]):
         self.cwd = os.getcwd()
@@ -47,14 +48,23 @@ class Config:
             return None
         return self.files[0]
     
-    def refetch_files(self, inp=None, out=None):
+    def remove_extension(self, file_name, extensions=[".mp4"]):
+        for ext in extensions:
+            if file_name.endswith(ext):
+                return file_name[:-len(ext)]
+        return file_name
+    
+    def refetch_files(self, inp=None, out=None, extensions=[".mp4"]):
         if inp is not None: self.in_path = inp
         if out is not None: self.out_path = out
 
         in_path, out_path = self.in_path, self.out_path
-        files = [f for f in os.listdir(in_path) if f.endswith(".mp4")]
-        files = [f for f in files if f"{f}" not in os.listdir(out_path) if f.endswith(".mp4")]
-        # files = [f for f in files if f"{f}_annotated" not in os.listdir(out_path) if f.endswith(".mp4")]
+        in_files = [self.remove_extension(f, extensions) for f in os.listdir(in_path) if f.endswith(tuple(extensions))]
+        out_files = [self.remove_extension(f, extensions) for f in os.listdir(out_path) if f.endswith(tuple(extensions))]
+
+        # files = [f for f in files if f"{f}" not in os.listdir(out_path) if f.endswith(".mp4")]
+        files = [f"{f}{self.extension}" for f in in_files if f"{f}_annotated" not in out_files]
+
         self.update(in_path, out_path, files)
         return files
 
@@ -104,12 +114,15 @@ config = Config()
 
 |||||||||||||		File: data.py		|||||||||||||
 # General Imports
-import subprocess, cv2, time, json, os
+import subprocess, cv2, json, os
 import numpy as np
 from functools import lru_cache, cached_property
 from customtkinter import filedialog
 from tkinter import messagebox
 from scipy.io.wavfile import write
+
+# Custom Imports
+from screens import SaveProgress
 
 class Data:
     """
@@ -167,9 +180,9 @@ class Data:
         self.frame_width = frame_width      # Width of the frame
         self.frame_height = frame_height    # Height of the frame
 
-        self.frames = []
-        self.audio_data =  []
-        self.annotations = {}
+        self.frames = []                    # List of (timestamp, frame) tuples
+        self.audio_data =  []               # List of (timestamp, audio_chunk) tuples
+        self.annotations = {}               # Dictionary of annotations with frame index as key
 
         self.curr_frame = 0
         self.max_frames = fc
@@ -178,13 +191,6 @@ class Data:
         self.channels = channels
         self.audio_name = self.name.replace(".mp4", ".wav")
         self.audio_path = os.path.join(self.out_path, self.audio_name)
-
-    # METHODS TO COMBINE DATA
-
-    @cached_property
-    def combined_audio(self):
-        """Combines all audio data into a single array, expensive operation hence cached"""
-        return np.concatenate(self.audio_data, axis=0)
 
     # METHODS TO GET DATA
 
@@ -196,13 +202,18 @@ class Data:
     def get_audio_data(self, index):
         return self.audio_data[index]
     
-    @lru_cache(maxsize=128)
-    def get_annotation(self, timestamp):
-        return self.annotations[timestamp]
+    def get_annotation(self, frame_idx):
+        if frame_idx not in self.annotations: return None
+        return self.annotations[frame_idx]
     
     @cached_property
     def get_curr_frame(self):
         return self.curr_frame
+    
+    def get_last_annotation(self):
+        if self.get_frames_length == 0 or self.get_annotations_length == 0:
+            return None
+        return self.get_annotation(max(self.annotations.keys()))
     
     @cached_property
     def get_max_frames(self):
@@ -216,33 +227,40 @@ class Data:
     
     # MOTHODS TO GET DATA LENGTH
 
-    @cached_property
+    @property
     def get_frames_length(self):
         return len(self.frames)
     
-    @cached_property
+    @property
     def get_audio_data_length(self):
         return len(self.audio_data)
     
-    @cached_property
+    @property
     def get_annotations_length(self):
         return len(self.annotations)
 
     # METHODS TO ADD DATA
 
-    def add_curr_frame(self, frame):
+    def add_curr_frame(self, timestamp, frame):
         if frame >= self.frame_count:
             print(f"Frame index {frame} is out of range.")
-        self.frames.append(frame)
+        self.frames.append((timestamp, frame))
 
-    def add_audio_data(self, audio):
-        self.audio_data.append(audio)
+    def add_audio_data(self, timestamp, audio):
+        self.audio_data.append((timestamp, audio))
 
-    def add_annotation(self, annotation):
+    def add_annotation(self, command, annotation):
         """Adds annotations with timestamp, potentially expensive if called frequently"""
-        self.curr_time = time.time()
-        time_diff = self.curr_time - self.init_time
-        self.annotations[time_diff] = annotation
+        if self.get_frames_length == 0:
+            print("Error: No frames to annotate.")
+            return
+
+        frame_idx = self.get_frames_length - 1
+        if frame_idx in self.annotations and self.annotations[frame_idx][0] == "start":
+            self.annotations[frame_idx] = ["start", list(annotation)]
+        else:
+            self.annotations[frame_idx] = [command, list(annotation)]
+    
 
     # METHODS TO UPDATE DATA
 
@@ -265,11 +283,67 @@ class Data:
     def update_curr_frame(self, frame):
         self.curr_frame = frame
 
-    def update_max_frame(self, frame):
-        self.max_frame = frame
+    def update_max_frames(self, frame):
+        self.max_frames = frame
 
     def increment_max_frame(self):
-        self.max_frame += 1
+        self.max_frames += 1
+
+    # METHODS TO COMBINE DATA
+
+    def identify_video_gaps(self, threshold=0.1):
+        """Identify gaps in video frames where the time difference exceeds the threshold."""
+        video_gaps = []
+        for i in range(1, len(self.frames)):
+            previous_time, _ = self.frames[i - 1]
+            current_time, _ = self.frames[i]
+            if current_time - previous_time > threshold:
+                video_gaps.append((previous_time, current_time))
+        return video_gaps
+    
+    def print_audio_video(self):
+        for v_time, frame in self.frames:
+            print(f"Video: {v_time}, frame: {frame}")
+
+        for idx, data in enumerate(self.audio_data):
+            a_time, audio = data
+            print(f"{idx} -- Audio: {a_time}, audio shape: {audio.shape}")
+
+    def combined_audio(self):
+        # self.print_audio_video()
+
+        """Combines all audio data into a single array, removing audio during video gaps."""
+        video_gaps = self.identify_video_gaps()
+
+        print(f"Video Gaps: {video_gaps}")
+        
+        synced_audio = []
+        current_audio_index = 0
+
+        for gap_start, gap_end in video_gaps:
+            # Add audio before the gap
+            while current_audio_index < len(self.audio_data) and self.audio_data[current_audio_index][0] < gap_start:
+                synced_audio.append(self.audio_data[current_audio_index][1])
+                current_audio_index += 1
+            
+            # Skip audio during the gap
+            while current_audio_index < len(self.audio_data) and self.audio_data[current_audio_index][0] < gap_end:
+                current_audio_index += 1
+
+        # Add remaining audio after the last gap
+        while current_audio_index < len(self.audio_data):
+            synced_audio.append(self.audio_data[current_audio_index][1])
+            current_audio_index += 1
+
+        print(f"Original Audio Frames: {len(self.audio_data)}, Synced: {len(synced_audio)}")
+        print(f"Saving audio data at {self.audio_path}")
+
+        if synced_audio:
+            combined_audio = np.concatenate(synced_audio, axis=0)
+            return combined_audio
+        else:
+            print("Error: Synced audio is empty or invalid.")
+            return np.array([])
 
     # METHODS TO SAVE DATA
 
@@ -313,7 +387,7 @@ class Data:
 
         # Write frames to the output video in the specified order
         print(f"Writing {len(self.frames)} frames to {self.out_file_path}")
-        for index in self.frames:
+        for timestamp, index in self.frames:
             if index < len(vid):
                 out.write(vid[index])
             else:
@@ -323,22 +397,25 @@ class Data:
     def process_audio_data(self):
         # Check if audio data and annotations are present
         if len(self.audio_data) > 0:
-            print(f"Saving {len(self.audio_data)} frames of audio data {self.out_path}")
-            write(self.audio_path, self.sample_rate, self.combined_audio)
+            write(self.audio_path, self.sample_rate, self.combined_audio())
 
             # TODO : add a logger
+        else:
+            print("No audio data to save")
 
-            subprocess.run([
-                'ffmpeg',
-                '-i', self.out_file_path,
-                '-i', self.audio_path,
-                '-c:v', 'copy',
-                '-c:a', 'aac',
-                '-strict', 'experimental',
-                self.out_file_path.replace('.mp4', '_annotated.mp4')
-            ])
+    def save_av_and_clean(self):
+        """Merge audio and video data using FFmpeg"""
+        subprocess.run([
+            'ffmpeg',
+            '-y',
+            '-i', self.out_file_path,
+            '-i', self.audio_path,
+            '-c:v', 'copy',
+            '-c:a', 'aac',
+            '-strict', 'experimental',
+            self.out_file_path.replace('.mp4', '_annotated.mp4')
+        ])
 
-    def clean_audio_video_data(self):
         # delete the audio and video data at self.out_file_path and self.audio_path
         if os.path.exists(self.out_file_path):
             os.remove(self.out_file_path)
@@ -346,42 +423,53 @@ class Data:
             os.remove(self.audio_path)  
 
     def save_annotations(self):
-        # Save annotations
-        if self.annotations:
-            """Save annotations to a JSON file"""
-            try:
-                with open(f"{self.out_path}\\{self.name}_annotations.json", "w") as file:
-                    json.dump(self.annotations, file)
-            except Exception as e:
-                print(f"Error saving annotations: {e}")
+        # add metadata to the annotations file
+        self.annotations["metadata"] = {
+            "video_name": self.name,
+            "frame_rate": self.frame_rate,
+            "frame_count": self.max_frames,
+            "frame_width": self.frame_width,
+            "frame_height": self.frame_height,
+            "sample_rate": self.sample_rate,
+            "channels": self.channels
+        }
 
-
-    def save_data(self):
-        """Function to save video and audio, and merge them using FFmpeg"""
+        """Save annotations to a JSON file"""
         try:
-            if not self.out_path:
-                self.out_path = filedialog.askdirectory(filetypes=[("MP4 files", "*.mp4")])
-
-            # TODO : len check
-            # # Check if there's audio data and video data synchronization is needed
-            # if len(self.audio_data) > 0:
-            #     assert len(self.frames) == len(self.audio_data), "Audio and video data are not in sync"
-
-            # Save video data
-            self.process_video_data()
-
-            # Save audio data
-            self.process_audio_data()
-
-            # Save annotations
-            self.save_annotations()
-
-            # Cleanup
-            self.clean_audio_video_data()
-
-
+            with open(self.out_file_path.replace('.mp4', '_annotated.json'), "w") as file:
+                json.dump(self.annotations, file)
         except Exception as e:
-            print(f"Error saving audio-video-annotation data: {e}")
+            print(f"Error saving annotations: {e}")
+
+
+    def save_data(self, app):
+        """Function to save video and audio, and merge them using FFmpeg"""
+        if not self.out_path:
+            self.out_path = filedialog.askdirectory(filetypes=[("MP4 files", "*.mp4")])
+
+        # Create progress window
+        progress = SaveProgress(app)
+        progress.mainloop()
+        progress.reset()
+
+        # Save video data
+        self.process_video_data()
+        progress.update_video_progress(1.0)
+
+        # Save audio data
+        self.process_audio_data()
+        progress.update_audio_progress(1.0)
+
+        # Cleanup
+        self.save_av_and_clean()
+        progress.update_av_progress(1.0)
+
+        # Save annotations
+        self.save_annotations()
+        progress.update_json_progress(1.0)
+
+        progress.destroy_save_progress()
+
 
     # METHODS TO DELETE DATA
 
@@ -396,10 +484,9 @@ class Data:
 |||||||||||||		File: main.py		|||||||||||||
 # imports
 import customtkinter as ctk
-from splash import Splash
+from screens import Splash
 from annotater.anno import create_annotater
 
-# TODO: Add draw annotations
 # TODO: test Surface audio signal
 # TODO: test annotations recorded 240p and recoreded in 1080p, scaled down to 240p
 
@@ -423,7 +510,7 @@ if __name__ == "__main__":
     create_annotater(app)
 
 
-|||||||||||||		File: splash.py		|||||||||||||
+|||||||||||||		File: screens.py		|||||||||||||
 # General Imports
 import os, customtkinter as ctk
 from PIL import Image
@@ -432,11 +519,11 @@ class Splash(ctk.CTkToplevel):
     def __init__(self, root):
         super().__init__(root)
         self.root = root
-        self.create_splash(root)
+        self.create_splash()
         self.bind("<Configure>", self.update_window_position)
         self.update_countdown(3)
 
-    def create_splash(self, root):
+    def create_splash(self):
         self.title("Loading...")
 
         # Center the splash screen
@@ -507,15 +594,75 @@ class Splash(ctk.CTkToplevel):
         self.root.deiconify()    # Show the main window
 
 
+class SaveProgress(ctk.CTkToplevel):
+    def __init__(self, root):
+        super().__init__(root)
+        self.root = root
+        self.create_save_progress()
+
+    def create_save_progress(self):
+        self.title("Saving Progress...")
+        self.geometry("400x250")
+        self.attributes("-topmost", True)
+
+        # video data progress bar
+        self.video_progress = ctk.CTkProgressBar(self, mode='determinate')
+        self.video_progress.pack(pady=10)
+        self.video_progress_label = ctk.CTkLabel(self, text="Video Data Save Progress...")
+        self.video_progress_label.pack(pady=5)
+
+        # audio data progress bar
+        self.audio_progress = ctk.CTkProgressBar(self, mode='determinate')
+        self.audio_progress.pack(pady=10)
+        self.audio_progress_label = ctk.CTkLabel(self, text="Audio Data Save Progress...")
+        self.audio_progress_label.pack(pady=5)
+
+        # audio-video data progress bar
+        self.av_progress = ctk.CTkProgressBar(self, mode='determinate')
+        self.av_progress.pack(pady=10)
+        self.av_progress_label = ctk.CTkLabel(self, text="Audio-Video Data Save Progress...")
+        self.av_progress_label.pack(pady=5)
+
+        # annotations json data progress bar
+        self.json_progress = ctk.CTkProgressBar(self, mode='determinate')
+        self.json_progress.pack(pady=10)
+        self.json_progress_label = ctk.CTkLabel(self, text="JSON Data Save Progress...")
+        self.json_progress_label.pack(pady=5)
+
+    def update_video_progress(self, value):
+        self.video_progress.set(value)
+
+    def update_audio_progress(self, value):
+        self.audio_progress.set(value)
+
+    def update_av_progress(self, value):
+        self.av_progress.set(value)
+
+    def update_json_progress(self, value):
+        self.json_progress.set(value)
+
+    def reset(self):
+        self.update_video_progress(0.0)
+        self.update_audio_progress(0.0)
+        self.update_av_progress(0.0)
+        self.update_json_progress(0.0)
+
+    def destroy_save_progress(self):
+        self.destroy()
+        self.root.deiconify()    # Show the main window
+
+
+
 |||||||||||||		File: annotater\anno.py		|||||||||||||
 # General Imports
-import threading
+import threading, os, json, cv2
 import customtkinter as ctk
-from tkinter import messagebox
+from tkinter import filedialog, messagebox
+from imutils.video import FileVideoStream
 
 # Local Imports
-from annotater.player import VideoPlayer
 from annotater.setup import file_setup, change_directory
+from annotater.player import VideoPlayer
 from config import config
 
 def annotate(app, current_file_label):
@@ -534,8 +681,48 @@ def refresh(current_file_label):
     current_file_label.configure(text=f"Current File to be Annotated: {config.fetch_top_file}")
 
 def watch():
-    # TODO: add logic to watch video
-    pass
+    # get which file to watch
+    watch_file = filedialog.askopenfilename(filetypes=[("MP4 files", "*.mp4")], title="Select a file to watch", initialdir=config.out_path)
+    meta_file = watch_file.replace("_annotated.mp4", "_annotated.json")
+
+    if not os.path.exists(watch_file):
+        messagebox.showerror("Error", "File not found.")
+        return
+
+    if not os.path.exists(meta_file):
+        messagebox.showerror("Error", "File metadata not found.")
+        return
+    
+    # json file
+    # example: { "223": ["start", [339, 39]], "234": ["move", [182, 201]], "235": ["move", [180, 202]], "245": ["end", [180, 202]], "metadata": { "video_name": "zhusky.mp4", "frame_rate": 30, "frame_count": 10225, "frame_width": 640, "frame_height": 360, "sample_rate": 44100, "channels": 2 }}
+    meta = json.load(open(meta_file, "r"))
+
+    # open video player and display annotations
+    vs = FileVideoStream('result.mp4').start()
+    # time.sleep(0.2)
+
+    while vs.more():
+        frame = vs.read()
+        if frame is None:
+            break
+
+        frame_number = int(vs.stream.get(cv2.CAP_PROP_POS_FRAMES))
+        if str(frame_number) in meta:
+            action, point = meta[str(frame_number)]
+            if action == "start":
+                cv2.circle(frame, tuple(point), 5, (0, 0, 255), -1)
+            elif action == "move":
+                cv2.circle(frame, tuple(point), 5, (0, 255, 0), -1)
+            elif action == "end":
+                cv2.circle(frame, tuple(point), 5, (255, 0, 0), -1)
+
+        cv2.imshow("Annotated Video", frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cv2.destroyAllWindows()
+    vs.stop()
 
 # Functions
 def create_annotater(app):
@@ -586,8 +773,6 @@ def create_annotater(app):
 import cv2
 import customtkinter as ctk
 from tkinter import DoubleVar
-
-# TODO : Make seeker faster and in real time
 
 class ControlWindow(ctk.CTkToplevel):
     def __init__(self, app, file_name, video_player, *args, **kwargs):
@@ -643,7 +828,7 @@ class ControlWindow(ctk.CTkToplevel):
 
 |||||||||||||		File: annotater\player.py		|||||||||||||
 # General Imports
-import cv2, os, time, threading, queue
+import cv2, os, time as t, threading, queue
 from tqdm import tqdm
 from tkinter import messagebox
 import sounddevice as sd
@@ -653,17 +838,13 @@ from data import Data
 from config import config
 from annotater.controller import ControlWindow
 
-# TODO : add audio callback function
-# TODO: setup audio input
-# TODO : implement draw_annotation later on in seperate dictionary
-
 
 class VideoPlayer:
     def __init__(self, app, file_name, done_event):
         
         # Video Player Objects
         self.app = app
-        self.cap = None
+        self.cap, self.frame, self.ret = None, None, None
         self.done_event = done_event  # Event to signal completion
 
         # Variables
@@ -674,6 +855,7 @@ class VideoPlayer:
 
         # FLags
         self.paused, self.drawing = False, False
+        self.start_counter = None
 
         # widgets
         self.control_window, self.control_frame = None, None
@@ -700,6 +882,7 @@ class VideoPlayer:
         self.last_frame_idx = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, self.last_frame_idx)
         _, self.last_frame = self.cap.read()
+        self.last_frame_idx = None
         
         # reset cap to the first frame
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -735,33 +918,41 @@ class VideoPlayer:
         self.control_window.mainloop()
 
     def mouse_callback(self, event, x, y, flags, param):
-        print(event, x, y, flags, param)
-        # if event == cv2.EVENT_LBUTTONDOWN:
-        #     self.paused = not self.paused
+        if event == cv2.EVENT_LBUTTONDOWN and not self.drawing:
+            self.drawing = True
+            self._data.add_annotation("start", (x, y))
+        elif event == cv2.EVENT_MOUSEMOVE and self.drawing:
+            self._data.add_annotation("move", (x, y))
+        elif event == cv2.EVENT_LBUTTONUP and self.drawing:
+            self.drawing = False
+            self._data.add_annotation("end", (x, y))
 
     def audio_callback(self, indata, frames, time, status):
-        self._data.add_audio_data(indata.copy())
+        if self.start_counter is None:
+            self.start_counter = t.perf_counter()
+        timestamp = t.perf_counter() - self.start_counter
+        self._data.add_audio_data(timestamp, indata.copy())
 
     def main_loop(self):
         cv2.namedWindow("Video Player")
         cv2.setMouseCallback("Video Player", self.mouse_callback)
         # cv2.positio
 
-        total_frames = self._data.max_frames
+        total_frames = self._data.get_max_frames
+
+        self.start_counter = t.perf_counter()  # Start high-resolution timer
 
         # # start audio stream
-        # self.audio_stream.start()
-
         with sd.InputStream(samplerate=self.samplerate, channels=self.channels, callback=self.audio_callback):
             with tqdm(total=total_frames, desc="Processing Frames") as self.pbar:
                 while self.cap.isOpened():
-                    start_time = time.time()
+                    start_time = t.time()
+                    current_counter = t.perf_counter() - self.start_counter
 
                     curr_frame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
                     if curr_frame >= total_frames: curr_frame = total_frames - 1
                     
                     # update seeker
-                    # self.control_window.seeker.configure(to=curr_frame)
                     self.control_window.seek_var.set(curr_frame)
 
                     # Check for commands
@@ -777,33 +968,49 @@ class VideoPlayer:
                     
                     # Check for pause
                     if not self.paused:
-                        ret, frame = self.cap.read()
-                        
-                        # TODO : think about ending
-                        if not ret: 
+                        self.ret, self.frame = self.cap.read()
+                        if not self.ret: 
                             self.pbar.total += 1
-                            cv2.imshow("Video Player", self.last_frame)
-                        else:
-                            cv2.imshow("Video Player", frame)
+                            self.frame = self.last_frame
+                        
+                        # Draw annotations
+                        if self.drawing:
+                            _annotation = self._data.get_last_annotation()
+                            largest_key = max(self._data.annotations.keys())
+                            if _annotation is not None and abs(largest_key - curr_frame) <= 5:
+                                command, (x, y) = _annotation
+                                if command == "start":
+                                    self.start_point = (x, y)
+                                elif command == "move":
+                                    cv2.line(self.frame, self.start_point, (x, y), (0, 0, 255), 3)
+                                    self.start_point = (x, y)
+                                elif command == "end":
+                                    cv2.line(self.frame, self.start_point, (x, y), (0, 0, 255), 3)
+                                    self.start_point = None
+                                    self.drawing = False
+
+                        # Display the frame
+                        cv2.imshow("Video Player", self.frame)
+                        
                     else:
                         self.pbar.total += 1
                         self._data.increment_max_frame()
 
                     # add current frame to data
-                    self._data.add_curr_frame(curr_frame)
+                    self._data.add_curr_frame(current_counter, curr_frame)
 
                     # Check for key press
                     key = cv2.waitKey(1) & 0xFF
-                    print(f"Key: {key}")
+                    # print(f"Key: {key}")
 
                     # Update progress bar
                     self.pbar.update(1)
 
                     # Update frame delay
-                    elapsed_time = time.time() - start_time
+                    elapsed_time = t.time() - start_time
                     remaining_time = max(0, self.frame_delay / 1000 - elapsed_time)  # Convert frame_delay to seconds
                     if remaining_time > 0:
-                        time.sleep(remaining_time)
+                        t.sleep(remaining_time)
 
     def toggle_pause(self):
         self.paused = not self.paused
@@ -821,7 +1028,7 @@ class VideoPlayer:
 
         # clean data
         self._data.clean()
-        self._data.update_max_frame(int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT)))
+        self._data.update_max_frames(int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT)))
         self._data.update(
             in_path=self.file_path, out_path=self.out_path,
             name=self.file_name, 
@@ -840,33 +1047,23 @@ class VideoPlayer:
         self.pbar.refresh()
 
     def close(self, save=False):
+        # relese video capture and stop audio stream
         self.cap.release()
-        # self.audio_stream.stop()
         sd.stop()
-        if save: self.save()
+
+        # save data if required
+        if save: self._data.save_data(self.app)
+
+        # # clean up
+        # self._data = None
+
+        # close windows and threads
         cv2.destroyAllWindows()
-        self._data = None
         self.done_event.set()
         self.video_thread.join(1)
         self.control_window.quit()
         self.control_window.destroy()
         self.app.deiconify()
-
-    def save(self):
-        self._data.save_data()
-
-    # def on_mouse_click(self, event):
-    #     if event.num == 1 and self.paused:  # Ensure this happens only if the video is paused
-    #         self.drawing = True
-    #         self.last_point = (event.x, event.y)
-    #     elif not self.paused:
-    #         self.drawing = False
-
-    # def on_mouse_move(self, event):
-    #     if self.drawing and self.paused:
-    #         x, y = event.x, event.y
-    #         self._data.add_annotation(((x, y), self.last_point))
-    #         self.last_point = (x, y)
 
 |||||||||||||		File: annotater\setup.py		|||||||||||||
 # General Imports

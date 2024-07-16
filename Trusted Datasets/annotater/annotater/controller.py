@@ -4,8 +4,6 @@ import cv2
 import customtkinter as ctk
 from tkinter import DoubleVar
 
-# TODO : Make seeker faster and in real time
-
 class ControlWindow(ctk.CTkToplevel):
     def __init__(self, app, file_name, video_player, *args, **kwargs):
         super().__init__(app, *args, **kwargs)
@@ -51,6 +49,7 @@ class ControlWindow(ctk.CTkToplevel):
         self.seek_var.set(0)
 
     def save_and_close(self):
+        self.attributes("-topmost", False)
         self.video_player.close(save=True)
         self.video_player.done_event.set()
 

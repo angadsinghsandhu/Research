@@ -6,11 +6,11 @@ class Splash(ctk.CTkToplevel):
     def __init__(self, root):
         super().__init__(root)
         self.root = root
-        self.create_splash(root)
+        self.create_splash()
         self.bind("<Configure>", self.update_window_position)
         self.update_countdown(3)
 
-    def create_splash(self, root):
+    def create_splash(self):
         self.title("Loading...")
 
         # Center the splash screen
@@ -79,3 +79,71 @@ class Splash(ctk.CTkToplevel):
     def destroy_splash(self):
         self.destroy()
         self.root.deiconify()    # Show the main window
+
+
+class SaveProgress(ctk.CTkToplevel):
+    def __init__(self, root, name):
+        super().__init__(root)
+        self.root = root
+        self.name = name
+        self.create_save_progress()
+        self.protocol("WM_DELETE_WINDOW", self.destroy_save_progress)
+
+    def create_save_progress(self):
+        self.title(f"{self.name}: Saving Progress...")
+        self.geometry("400x250")
+        self.attributes("-topmost", True)
+
+        # video data progress bar
+        self.video_progress = ctk.CTkProgressBar(self, mode='determinate')
+        self.video_progress.pack(pady=10)
+        self.video_progress_label = ctk.CTkLabel(self, text="Video Data Save Progress...")
+        self.video_progress_label.pack(pady=5)
+
+        # audio data progress bar
+        self.audio_progress = ctk.CTkProgressBar(self, mode='determinate')
+        self.audio_progress.pack(pady=10)
+        self.audio_progress_label = ctk.CTkLabel(self, text="Audio Data Save Progress...")
+        self.audio_progress_label.pack(pady=5)
+
+        # audio-video data progress bar
+        self.av_progress = ctk.CTkProgressBar(self, mode='determinate')
+        self.av_progress.pack(pady=10)
+        self.av_progress_label = ctk.CTkLabel(self, text="Audio-Video Data Save Progress...")
+        self.av_progress_label.pack(pady=5)
+
+        # annotations json data progress bar
+        self.json_progress = ctk.CTkProgressBar(self, mode='determinate')
+        self.json_progress.pack(pady=10)
+        self.json_progress_label = ctk.CTkLabel(self, text="JSON Data Save Progress...")
+        self.json_progress_label.pack(pady=5)
+
+        # reset progress bars
+        self.reset()
+
+    def update_title_on_save(self):
+        self.title(f"{self.name}: Progress Saved!!!")
+
+    def update_video_progress(self, value):
+        self.video_progress.set(value)
+
+    def update_audio_progress(self, value):
+        self.audio_progress.set(value)
+
+    def update_av_progress(self, value):
+        self.av_progress.set(value)
+
+    def update_json_progress(self, value):
+        self.json_progress.set(value)
+
+    def reset(self):
+        self.title(f"{self.name}: Saving Progress...")
+        self.update_video_progress(0.0)
+        self.update_audio_progress(0.0)
+        self.update_av_progress(0.0)
+        self.update_json_progress(0.0)
+
+    def destroy_save_progress(self):
+        self.destroy()
+        self.root.deiconify()    # Show the main window
+

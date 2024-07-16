@@ -9,17 +9,13 @@ from data import Data
 from config import config
 from annotater.controller import ControlWindow
 
-# TODO : add audio callback function
-# TODO: setup audio input
-# TODO : implement draw_annotation later on in seperate dictionary
-
 
 class VideoPlayer:
     def __init__(self, app, file_name, done_event):
         
         # Video Player Objects
         self.app = app
-        self.cap = None
+        self.cap, self.frame, self.ret = None, None, None
         self.done_event = done_event  # Event to signal completion
 
         # Variables
@@ -57,6 +53,7 @@ class VideoPlayer:
         self.last_frame_idx = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, self.last_frame_idx)
         _, self.last_frame = self.cap.read()
+        self.last_frame_idx = None
         
         # reset cap to the first frame
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -92,9 +89,14 @@ class VideoPlayer:
         self.control_window.mainloop()
 
     def mouse_callback(self, event, x, y, flags, param):
-        print(event, x, y, flags, param)
-        # if event == cv2.EVENT_LBUTTONDOWN:
-        #     self.paused = not self.paused
+        if event == cv2.EVENT_LBUTTONDOWN and not self.drawing:
+            self.drawing = True
+            self._data.add_annotation("start", (x, y))
+        elif event == cv2.EVENT_MOUSEMOVE and self.drawing:
+            self._data.add_annotation("move", (x, y))
+        elif event == cv2.EVENT_LBUTTONUP and self.drawing:
+            self.drawing = False
+            self._data.add_annotation("end", (x, y))
 
     def audio_callback(self, indata, frames, time, status):
         if self.start_counter is None:
@@ -107,7 +109,7 @@ class VideoPlayer:
         cv2.setMouseCallback("Video Player", self.mouse_callback)
         # cv2.positio
 
-        total_frames = self._data.max_frames
+        total_frames = self._data.get_max_frames
 
         self.start_counter = t.perf_counter()  # Start high-resolution timer
 
@@ -122,7 +124,6 @@ class VideoPlayer:
                     if curr_frame >= total_frames: curr_frame = total_frames - 1
                     
                     # update seeker
-                    # self.control_window.seeker.configure(to=curr_frame)
                     self.control_window.seek_var.set(curr_frame)
 
                     # Check for commands
@@ -138,14 +139,30 @@ class VideoPlayer:
                     
                     # Check for pause
                     if not self.paused:
-                        ret, frame = self.cap.read()
-                        
-                        # TODO : think about ending
-                        if not ret: 
+                        self.ret, self.frame = self.cap.read()
+                        if not self.ret: 
                             self.pbar.total += 1
-                            cv2.imshow("Video Player", self.last_frame)
-                        else:
-                            cv2.imshow("Video Player", frame)
+                            self.frame = self.last_frame
+                        
+                        # Draw annotations
+                        if self.drawing:
+                            _annotation = self._data.get_last_annotation()
+                            largest_key = max(self._data.annotations.keys())
+                            if _annotation is not None and abs(largest_key - curr_frame) <= 5:
+                                command, (x, y) = _annotation
+                                if command == "start":
+                                    self.start_point = (x, y)
+                                elif command == "move":
+                                    cv2.line(self.frame, self.start_point, (x, y), (0, 0, 255), 3)
+                                    self.start_point = (x, y)
+                                elif command == "end":
+                                    cv2.line(self.frame, self.start_point, (x, y), (0, 0, 255), 3)
+                                    self.start_point = None
+                                    self.drawing = False
+
+                        # Display the frame
+                        cv2.imshow("Video Player", self.frame)
+                        
                     else:
                         self.pbar.total += 1
                         self._data.increment_max_frame()
@@ -155,7 +172,7 @@ class VideoPlayer:
 
                     # Check for key press
                     key = cv2.waitKey(1) & 0xFF
-                    print(f"Key: {key}")
+                    # print(f"Key: {key}")
 
                     # Update progress bar
                     self.pbar.update(1)
@@ -206,10 +223,10 @@ class VideoPlayer:
         sd.stop()
 
         # save data if required
-        if save: self.save()
+        if save: self._data.save_data(self.app)
 
-        # clean up
-        self._data = None
+        # # clean up
+        # self._data = None
 
         # close windows and threads
         cv2.destroyAllWindows()
@@ -218,19 +235,3 @@ class VideoPlayer:
         self.control_window.quit()
         self.control_window.destroy()
         self.app.deiconify()
-
-    def save(self):
-        self._data.save_data()
-
-    # def on_mouse_click(self, event):
-    #     if event.num == 1 and self.paused:  # Ensure this happens only if the video is paused
-    #         self.drawing = True
-    #         self.last_point = (event.x, event.y)
-    #     elif not self.paused:
-    #         self.drawing = False
-
-    # def on_mouse_move(self, event):
-    #     if self.drawing and self.paused:
-    #         x, y = event.x, event.y
-    #         self._data.add_annotation(((x, y), self.last_point))
-    #         self.last_point = (x, y)

@@ -2,12 +2,13 @@
 import os, time
 
 class Config:
-    def __init__(self, cwd=None, in_path=None, out_path=None, files=[]):
+    def __init__(self, cwd=None, in_path=None, out_path=None, files=[], extension=".mp4"):
         self._cwd = cwd
         self._in_path = in_path
         self._out_path = out_path
         self._files = files
         self._last_update = time.time()
+        self.extension = extension
 
     def update(self, in_path=None, out_path=None, files=[]):
         self.cwd = os.getcwd()
@@ -31,14 +32,23 @@ class Config:
             return None
         return self.files[0]
     
-    def refetch_files(self, inp=None, out=None):
+    def remove_extension(self, file_name, extensions=[".mp4"]):
+        for ext in extensions:
+            if file_name.endswith(ext):
+                return file_name[:-len(ext)]
+        return file_name
+    
+    def refetch_files(self, inp=None, out=None, extensions=[".mp4"]):
         if inp is not None: self.in_path = inp
         if out is not None: self.out_path = out
 
         in_path, out_path = self.in_path, self.out_path
-        files = [f for f in os.listdir(in_path) if f.endswith(".mp4")]
-        files = [f for f in files if f"{f}" not in os.listdir(out_path) if f.endswith(".mp4")]
-        # files = [f for f in files if f"{f}_annotated" not in os.listdir(out_path) if f.endswith(".mp4")]
+        in_files = [self.remove_extension(f, extensions) for f in os.listdir(in_path) if f.endswith(tuple(extensions))]
+        out_files = [self.remove_extension(f, extensions) for f in os.listdir(out_path) if f.endswith(tuple(extensions))]
+
+        # files = [f for f in files if f"{f}" not in os.listdir(out_path) if f.endswith(".mp4")]
+        files = [f"{f}{self.extension}" for f in in_files if f"{f}_annotated" not in out_files]
+
         self.update(in_path, out_path, files)
         return files
 

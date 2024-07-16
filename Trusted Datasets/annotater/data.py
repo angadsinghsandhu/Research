@@ -1,11 +1,13 @@
 # General Imports
-import subprocess, cv2, time, json, os
+import subprocess, cv2, json, os, threading, queue
 import numpy as np
 from functools import lru_cache, cached_property
 from customtkinter import filedialog
 from tkinter import messagebox
 from scipy.io.wavfile import write
-import sounddevice as sd
+
+# Custom Imports
+from screens import SaveProgress
 
 class Data:
     """
@@ -85,13 +87,18 @@ class Data:
     def get_audio_data(self, index):
         return self.audio_data[index]
     
-    @lru_cache(maxsize=128)
-    def get_annotation(self, timestamp):
-        return self.annotations[timestamp]
+    def get_annotation(self, frame_idx):
+        if frame_idx not in self.annotations: return None
+        return self.annotations[frame_idx]
     
     @cached_property
     def get_curr_frame(self):
         return self.curr_frame
+    
+    def get_last_annotation(self):
+        if self.get_frames_length == 0 or self.get_annotations_length == 0:
+            return None
+        return self.get_annotation(max(self.annotations.keys()))
     
     @cached_property
     def get_max_frames(self):
@@ -105,15 +112,15 @@ class Data:
     
     # MOTHODS TO GET DATA LENGTH
 
-    @cached_property
+    @property
     def get_frames_length(self):
         return len(self.frames)
     
-    @cached_property
+    @property
     def get_audio_data_length(self):
         return len(self.audio_data)
     
-    @cached_property
+    @property
     def get_annotations_length(self):
         return len(self.annotations)
 
@@ -127,11 +134,18 @@ class Data:
     def add_audio_data(self, timestamp, audio):
         self.audio_data.append((timestamp, audio))
 
-    def add_annotation(self, annotation):
+    def add_annotation(self, command, annotation):
         """Adds annotations with timestamp, potentially expensive if called frequently"""
-        self.curr_time = time.time()
-        time_diff = self.curr_time - self.init_time
-        self.annotations[time_diff] = annotation
+        if self.get_frames_length == 0:
+            print("Error: No frames to annotate.")
+            return
+
+        frame_idx = self.get_frames_length - 1
+        if frame_idx in self.annotations and self.annotations[frame_idx][0] == "start":
+            self.annotations[frame_idx] = ["start", list(annotation)]
+        else:
+            self.annotations[frame_idx] = [command, list(annotation)]
+    
 
     # METHODS TO UPDATE DATA
 
@@ -181,12 +195,10 @@ class Data:
             print(f"{idx} -- Audio: {a_time}, audio shape: {audio.shape}")
 
     def combined_audio(self):
-        self.print_audio_video()
+        # self.print_audio_video()
 
         """Combines all audio data into a single array, removing audio during video gaps."""
         video_gaps = self.identify_video_gaps()
-
-        print(f"Video Gaps: {video_gaps}")
         
         synced_audio = []
         current_audio_index = 0
@@ -206,9 +218,6 @@ class Data:
             synced_audio.append(self.audio_data[current_audio_index][1])
             current_audio_index += 1
 
-        print(f"Original Audio Frames: {len(self.audio_data)}, Synced: {len(synced_audio)}")
-        print(f"Saving audio data at {self.audio_path}")
-
         if synced_audio:
             combined_audio = np.concatenate(synced_audio, axis=0)
             return combined_audio
@@ -218,7 +227,7 @@ class Data:
 
     # METHODS TO SAVE DATA
 
-    def process_video_data(self):
+    def process_video_data(self, progress=None):
         if not self.frames:
             messagebox.showerror("Error", "No frames to save.")
             return
@@ -257,67 +266,89 @@ class Data:
         out = cv2.VideoWriter(self.out_file_path, fourcc, self.frame_rate, (self.frame_width, self.frame_height))
 
         # Write frames to the output video in the specified order
-        print(f"Writing {len(self.frames)} frames to {self.out_file_path}")
+        last_index = len(self.frames) - 1
         for timestamp, index in self.frames:
             if index < len(vid):
                 out.write(vid[index])
+                if progress: progress.update_video_progress(index / last_index)
             else:
                 print(f"Warning: Frame index {index} is out of range.")
-        print(f"Video saved to {self.out_file_path}")
 
-    def process_audio_data(self):
+    def process_audio_data(self, progress=None):
         # Check if audio data and annotations are present
         if len(self.audio_data) > 0:
             write(self.audio_path, self.sample_rate, self.combined_audio())
-
             # TODO : add a logger
-
-            subprocess.run([
-                'ffmpeg',
-                '-i', self.out_file_path,
-                '-i', self.audio_path,
-                '-c:v', 'copy',
-                '-c:a', 'aac',
-                '-strict', 'experimental',
-                self.out_file_path.replace('.mp4', '_annotated.mp4')
-            ])
+            if progress: progress.update_audio_progress(1.0)
         else:
             print("No audio data to save")
 
-    def clean_audio_video_data(self):
+    def save_av_and_clean(self, progress=None):
+        """Merge audio and video data using FFmpeg"""
+        subprocess.run([
+            'ffmpeg',
+            '-hide_banner',
+            '-y',
+            '-i', self.out_file_path,
+            '-i', self.audio_path,
+            '-c:v', 'copy',
+            '-c:a', 'aac',
+            '-strict', 'experimental',
+            self.out_file_path.replace('.mp4', '_annotated.mp4')
+        ])
+
+        if progress: progress.update_av_progress(1.0)
+
         # delete the audio and video data at self.out_file_path and self.audio_path
         if os.path.exists(self.out_file_path):
             os.remove(self.out_file_path)
         if os.path.exists(self.audio_path):
             os.remove(self.audio_path)  
 
-    def save_annotations(self):
-        # Save annotations
-        if self.annotations:
-            """Save annotations to a JSON file"""
-            try:
-                with open(f"{self.out_path}\\{self.name}_annotations.json", "w") as file:
-                    json.dump(self.annotations, file)
-            except Exception as e:
-                print(f"Error saving annotations: {e}")
+    def save_annotations(self, progress=None):
+        # add metadata to the annotations file
+        self.annotations["metadata"] = {
+            "video_name": self.name,
+            "frame_rate": self.frame_rate,
+            "frame_count": self.max_frames,
+            "frame_width": self.frame_width,
+            "frame_height": self.frame_height,
+            "sample_rate": self.sample_rate,
+            "channels": self.channels
+        }
 
+        """Save annotations to a JSON file"""
+        try:
+            with open(self.out_file_path.replace('.mp4', '_annotated.json'), "w") as file:
+                json.dump(self.annotations, file)
 
-    def save_data(self):
+            if progress: progress.update_json_progress(1.0)
+        except Exception as e:
+            print(f"Error saving annotations: {e}")
+
+    def save_data(self, app):
         """Function to save video and audio, and merge them using FFmpeg"""
         if not self.out_path:
             self.out_path = filedialog.askdirectory(filetypes=[("MP4 files", "*.mp4")])
 
+        # Create progress window
+        progress = SaveProgress(app, self.name)
+        progress.update()
+
         # Save video data
-        self.process_video_data()
+        self.process_video_data(progress=progress)
 
         # Save audio data
-        self.process_audio_data()
-
-        # Save annotations
-        self.save_annotations()
+        self.process_audio_data(progress=progress)
 
         # Cleanup
-        self.clean_audio_video_data()
+        self.save_av_and_clean(progress=progress)
+
+        # Save annotations
+        self.save_annotations(progress=progress)
+
+        # update progress window title
+        progress.update_title_on_save()
 
     # METHODS TO DELETE DATA
 

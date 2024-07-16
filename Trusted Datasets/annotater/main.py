@@ -1,9 +1,8 @@
 # imports
 import customtkinter as ctk
-from splash import Splash
+from screens import Splash
 from annotater.anno import create_annotater
 
-# TODO: Add draw annotations
 # TODO: test Surface audio signal
 # TODO: test annotations recorded 240p and recoreded in 1080p, scaled down to 240p
 
