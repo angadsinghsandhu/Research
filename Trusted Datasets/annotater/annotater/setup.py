@@ -1,35 +1,44 @@
 # General Imports
-import os
+import os, logging, ctypes
 from customtkinter import filedialog
 from tkinter import messagebox
 
-# Local Imports
-from config import config
+# Set up logging
+logger = logging.getLogger('app')
 
-def file_setup():
-    # get current working directory
-    cwd = os.getcwd()
-    
-    # Select Input Video Directory
-    if not os.path.exists(f"{cwd}\data"): in_path = filedialog.askdirectory(title="Select Input Directory", initialdir=cwd)
-    else: in_path = f"{cwd}\data"
+def align_window(app, window_width=1/2, window_height=1/2, horizontal="center", vertical="center", offset=-9, top_bar=29):
+    screen_width = app.winfo_screenwidth()
+    screen_height = app.winfo_screenheight()
 
-    # Select Output Directory
-    if not os.path.exists(f"{cwd}\out"): out_path = filedialog.askdirectory(title="Select Output Directory", initialdir=cwd)
-    else: out_path = f"{cwd}\out"
+    if window_width and window_width <= 1: window_width *= screen_width
+    if window_height and window_height <= 1: window_height *= screen_height
 
-    # get list of names all mp4 files in self.file_path
-    in_files = [f for f in os.listdir(in_path) if f.endswith(".mp4")]
+    app.geometry(f"{window_width}x{window_height}")
 
-    if len(in_files) == 0: 
-        messagebox.showerror("Error", "No MP4 files found in the input directory.")
-    
-    files = config.refetch_files(in_path, out_path)
+    while app.winfo_width() == 200 or app.winfo_height() == 200:
+        app.update()
+        app.after(1000)
 
-def change_directory():
-    new_directory = filedialog.askdirectory(title="Select New Directory")
-    if new_directory:
-        os.chdir(new_directory)
-        print(f"Current working directory changed to: {new_directory}")
-        in_path, out_path, files = file_setup()
-        return in_path, out_path, files, new_directory
+    window_width, window_height = app.winfo_width(), app.winfo_height()
+
+    # find distace of window from right
+    if horizontal == "center": position_right = (screen_width / 2) - (window_width / 2)
+    elif horizontal == "left": position_right = 0
+    elif horizontal == "right": position_right = screen_width - window_width
+    else: position_right = (screen_width / 2) - (window_width / 2)
+
+    # find distance of window from top
+    if vertical == "center": position_top = (screen_height / 2) - (window_height / 2)
+    elif vertical == "top": position_top = 0
+    elif vertical == "bottom": position_top = screen_height - window_height
+    else: position_top = (screen_height / 2) - (window_height / 2)
+
+    # calculate the mid point of the window
+    mid_x, mid_y = int(position_right+offset), int(position_top-top_bar+offset)
+
+    app.geometry(f"+{mid_x}+{mid_y}")
+    app.update()
+
+    print(f"==> Screen Width: {screen_width}, Screen Height: {screen_height}, Window Width: {window_width}, Window Height: {window_height}, position_right: {position_right}, position_top: {position_top}")
+
+    return (mid_x, mid_y), (int(window_width), int(window_height)), (int(screen_width), int(screen_height))

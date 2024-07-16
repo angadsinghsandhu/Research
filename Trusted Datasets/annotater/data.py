@@ -1,5 +1,5 @@
 # General Imports
-import subprocess, cv2, json, os, threading, queue
+import subprocess, cv2, json, os, logging
 import numpy as np
 from functools import lru_cache, cached_property
 from customtkinter import filedialog
@@ -8,6 +8,9 @@ from scipy.io.wavfile import write
 
 # Custom Imports
 from screens import SaveProgress
+
+# Set up logging
+logger = logging.getLogger('app')
 
 class Data:
     """
@@ -28,30 +31,7 @@ class Data:
     """
     def __init__(self, in_path, out_path, name, frame_width, frame_height, fps=30, fc=10225, sample_rate=44100, channels=2):
 
-        def print_data_object_info(name, in_path, out_path, fps, fc, frame_width, frame_height, sample_rate, channels):
-            table_data = [
-                ["Description", "Value"],
-                ["Data Object Created for", name],
-                ["Input Path", in_path],
-                ["Output Path", out_path],
-                ["Name", name],
-                ["FPS", fps],
-                ["Frame Count", fc],
-                ["Frame Width", frame_width],
-                ["Frame Height", frame_height],
-                ["Sample Rate", sample_rate],
-                ["Channels", channels]
-            ]
-
-            column_width = max(len(str(item)) for row in table_data for item in row) + 2
-            separator = "+" + "-" * (column_width * 2 + 1) + "+"
-
-            print(separator)
-            for row in table_data:
-                print("|" + "|".join(str(item).center(column_width) for item in row) + "|")
-                print(separator)
-
-        print_data_object_info(name, in_path, out_path, fps, fc, frame_width, frame_height, sample_rate, channels)
+        self.print_data_object_info(name, in_path, out_path, fps, fc, frame_width, frame_height, sample_rate, channels, log=True)
 
         self.in_path = in_path      # Path to the video file selected
         self.out_path = out_path    # Path where the video file will be saved
@@ -76,6 +56,38 @@ class Data:
         self.channels = channels
         self.audio_name = self.name.replace(".mp4", ".wav")
         self.audio_path = os.path.join(self.out_path, self.audio_name)
+
+        logger.info(f"Data object for {name} initialized")
+
+    # METHODS TO PRINT DATA
+
+    def print_data_object_info(self, name, in_path, out_path, fps, fc, frame_width, frame_height, sample_rate, channels, log=False):
+        table_data = [
+            ["Description", "Value"],
+            ["Data Object Created for", name],
+            ["Input Path", in_path],
+            ["Output Path", out_path],
+            ["Name", name],
+            ["FPS", fps],
+            ["Frame Count", fc],
+            ["Frame Width", frame_width],
+            ["Frame Height", frame_height],
+            ["Sample Rate", sample_rate],
+            ["Channels", channels]
+        ]
+
+        column_width = max(len(str(item)) for row in table_data for item in row) + 2
+        separator = "+" + "-" * (column_width * 2 + 1) + "+"
+        
+        if log:
+            _str = "| "
+            for row in range(1, len(table_data)): _str +=  str(table_data[row][0]) + " ==> " + str(table_data[row][1]) + " | "
+            logger.debug(_str.rstrip())
+        else:
+            print(separator)
+            for row in table_data:
+                print("|" + "|".join(str(item).center(column_width) for item in row) + "|")
+                print(separator)
 
     # METHODS TO GET DATA
 
@@ -128,7 +140,7 @@ class Data:
 
     def add_curr_frame(self, timestamp, frame):
         if frame >= self.frame_count:
-            print(f"Frame index {frame} is out of range.")
+            logger.warning(f"Frame index {frame} is out of range.")
         self.frames.append((timestamp, frame))
 
     def add_audio_data(self, timestamp, audio):
@@ -137,15 +149,15 @@ class Data:
     def add_annotation(self, command, annotation):
         """Adds annotations with timestamp, potentially expensive if called frequently"""
         if self.get_frames_length == 0:
-            print("Error: No frames to annotate.")
+            logger.error("No frames to annotate.")
             return
 
         frame_idx = self.get_frames_length - 1
         if frame_idx in self.annotations and self.annotations[frame_idx][0] == "start":
             self.annotations[frame_idx] = ["start", list(annotation)]
-        else:
-            self.annotations[frame_idx] = [command, list(annotation)]
-    
+        else: self.annotations[frame_idx] = [command, list(annotation)]
+
+        logger.debug(f"Added annotation at frame {frame_idx} with command {command}")
 
     # METHODS TO UPDATE DATA
 
@@ -164,6 +176,8 @@ class Data:
 
         self.sample_rate = sample_rate
         self.channels = channels
+
+        logger.info(f"Data() updated for {name}: in_path={in_path}, out_path={out_path}, frame_width={frame_width}, frame_height={frame_height}")
 
     def update_curr_frame(self, frame):
         self.curr_frame = frame
@@ -185,18 +199,8 @@ class Data:
             if current_time - previous_time > threshold:
                 video_gaps.append((previous_time, current_time))
         return video_gaps
-    
-    def print_audio_video(self):
-        for v_time, frame in self.frames:
-            print(f"Video: {v_time}, frame: {frame}")
-
-        for idx, data in enumerate(self.audio_data):
-            a_time, audio = data
-            print(f"{idx} -- Audio: {a_time}, audio shape: {audio.shape}")
 
     def combined_audio(self):
-        # self.print_audio_video()
-
         """Combines all audio data into a single array, removing audio during video gaps."""
         video_gaps = self.identify_video_gaps()
         
@@ -220,9 +224,10 @@ class Data:
 
         if synced_audio:
             combined_audio = np.concatenate(synced_audio, axis=0)
+            logger.debug("Combined audio data successfully")
             return combined_audio
         else:
-            print("Error: Synced audio is empty or invalid.")
+            logger.error("Synced audio is empty or invalid.")
             return np.array([])
 
     # METHODS TO SAVE DATA
@@ -230,6 +235,7 @@ class Data:
     def process_video_data(self, progress=None):
         if not self.frames:
             messagebox.showerror("Error", "No frames to save.")
+            logger.error("No frames to save")
             return
 
         # open the video file
@@ -238,6 +244,7 @@ class Data:
         # check if the video file is opened
         if not cap.isOpened():
             messagebox.showerror("Error", "Failed to open video file.")
+            logger.error("Failed to open video file")
             return
         
         # read the video file frame by frame
@@ -272,16 +279,17 @@ class Data:
                 out.write(vid[index])
                 if progress: progress.update_video_progress(index / last_index)
             else:
-                print(f"Warning: Frame index {index} is out of range.")
+                logger.warning(f"Frame index {index} is out of range.")
+
+        logger.info(f"Video data processed and saved to {self.out_file_path}")
 
     def process_audio_data(self, progress=None):
         # Check if audio data and annotations are present
         if len(self.audio_data) > 0:
             write(self.audio_path, self.sample_rate, self.combined_audio())
-            # TODO : add a logger
+            logger.info(f"Audio data saved to {self.audio_path}")
             if progress: progress.update_audio_progress(1.0)
-        else:
-            print("No audio data to save")
+        else: logger.warning("No audio data to save")
 
     def save_av_and_clean(self, progress=None):
         """Merge audio and video data using FFmpeg"""
@@ -298,12 +306,15 @@ class Data:
         ])
 
         if progress: progress.update_av_progress(1.0)
+        logger.info(f"Audio and video merged and saved to {self.out_file_path.replace('.mp4', '_annotated.mp4')}")
 
         # delete the audio and video data at self.out_file_path and self.audio_path
         if os.path.exists(self.out_file_path):
             os.remove(self.out_file_path)
+            logger.debug(f"Deleted temporary video file {self.out_file_path}")
         if os.path.exists(self.audio_path):
-            os.remove(self.audio_path)  
+            os.remove(self.audio_path) 
+            logger.debug(f"Deleted temporary audio file {self.audio_path}")
 
     def save_annotations(self, progress=None):
         # add metadata to the annotations file
@@ -323,13 +334,15 @@ class Data:
                 json.dump(self.annotations, file)
 
             if progress: progress.update_json_progress(1.0)
-        except Exception as e:
-            print(f"Error saving annotations: {e}")
+            logger.info(f"Annotations saved to {self.out_file_path.replace('.mp4', '_annotated.json')}")
+        except Exception as e: logger.error(f"Error saving annotations: {e}")
 
     def save_data(self, app):
         """Function to save video and audio, and merge them using FFmpeg"""
         if not self.out_path:
             self.out_path = filedialog.askdirectory(filetypes=[("MP4 files", "*.mp4")])
+
+        logger.info(f"Saving data for {self.name} to {self.out_path}")
 
         # Create progress window
         progress = SaveProgress(app, self.name)
@@ -349,6 +362,7 @@ class Data:
 
         # update progress window title
         progress.update_title_on_save()
+        logger.info(f"Data for {self.name} saved successfully")
 
     # METHODS TO DELETE DATA
 
@@ -359,3 +373,4 @@ class Data:
         self.annotations = {}
         self.curr_frame = 0
         self.max_frame = 0
+        logger.debug("Data object cleaned")

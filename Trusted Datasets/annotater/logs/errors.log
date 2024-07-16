@@ -1,0 +1,137 @@
+[2024-07-16 12:56:56,177]-(D:\Code\Research\Trusted Datasets\annotater\config.py)-(app)-{ERROR}-[59] : Error refetching files: Config.last_update() takes 1 positional argument but 2 were given
+[2024-07-16 12:56:56,178]-(D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py)-(app)-{ERROR}-[47] : An error occurred during file setup: Config.last_update() takes 1 positional argument but 2 were given
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py", line 44, in file_setup
+    files = config.refetch_files(in_path, out_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 60, in refetch_files
+    raise e
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 55, in refetch_files
+    self.update(self.in_path, self.out_path, files)
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 22, in update
+    self.last_update = time.time()
+    ^^^^^^^^^^^^^^^^
+TypeError: Config.last_update() takes 1 positional argument but 2 were given
+[2024-07-16 13:01:06,420]-(D:\Code\Research\Trusted Datasets\annotater\config.py)-(app)-{ERROR}-[59] : Error refetching files: Config.last_update() takes 1 positional argument but 2 were given
+[2024-07-16 13:01:06,421]-(D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py)-(app)-{ERROR}-[47] : An error occurred during file setup: Config.last_update() takes 1 positional argument but 2 were given
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py", line 44, in file_setup
+    files = config.refetch_files(in_path, out_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 60, in refetch_files
+    raise e
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 55, in refetch_files
+    self.update(self.in_path, self.out_path, files)
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 22, in update
+    self.last_update = time.time()
+    ^^^^^^^^^^^^^^^^
+TypeError: Config.last_update() takes 1 positional argument but 2 were given
+[2024-07-16 13:35:24,054]-(Line 45 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:ERROR} : File not found: timer.mp4
+[2024-07-16 15:55:54,559]-(Line 45 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:ERROR} : File not found: timer.mp4
+[2024-07-16 15:56:37,835]-(Line 59 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:ERROR} : Error refetching files: cannot access local variable 'in_files' where it is not associated with a value
+[2024-07-16 15:56:37,840]-(Line 38 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:ERROR} : Error refreshing file list: cannot access local variable 'in_files' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py", line 34, in refresh
+    _ = config.refetch_files()
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 60, in refetch_files
+    raise e
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 53, in refetch_files
+    files = [f"{f}{self.extension}" for f in in_files if f"{f}_annotated" not in out_files]
+                                             ^^^^^^^^
+UnboundLocalError: cannot access local variable 'in_files' where it is not associated with a value
+[2024-07-16 15:58:38,342]-(Line 59 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:ERROR} : Error refetching files: cannot access local variable 'in_files' where it is not associated with a value
+[2024-07-16 15:58:38,346]-(Line 38 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:ERROR} : Error refreshing file list: cannot access local variable 'in_files' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py", line 34, in refresh
+    _ = config.refetch_files()
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 60, in refetch_files
+    raise e
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 53, in refetch_files
+    files = [f"{f}{self.extension}" for f in in_files if f"{f}_annotated" not in out_files]
+                                             ^^^^^^^^
+UnboundLocalError: cannot access local variable 'in_files' where it is not associated with a value
+[2024-07-16 16:02:39,136]-(Line 99 at D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py)-{app:ERROR} : An error occurred during directory change: cannot unpack non-iterable NoneType object
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py", line 94, in change_directory
+    in_path, out_path, files = file_setup()
+    ^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: cannot unpack non-iterable NoneType object
+[2024-07-16 16:06:14,592]-(Line 86 at D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py)-{app:ERROR} : An error occurred during file setup: [WinError 3] The system cannot find the path specified: ''
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py", line 74, in file_setup
+    in_files = [f for f in os.listdir(in_path) if f.endswith(".mp4")]
+                           ^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 3] The system cannot find the path specified: ''
+[2024-07-16 16:06:14,595]-(Line 101 at D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py)-{app:ERROR} : An error occurred during directory change: cannot unpack non-iterable NoneType object
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py", line 96, in change_directory
+    in_path, out_path, files = file_setup()
+    ^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: cannot unpack non-iterable NoneType object
+[2024-07-16 16:12:42,239]-(Line 60 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:ERROR} : Error refetching files: cannot access local variable 'in_files' where it is not associated with a value
+[2024-07-16 16:12:42,242]-(Line 38 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:ERROR} : Error refreshing file list: cannot access local variable 'in_files' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py", line 34, in refresh
+    _ = config.refetch_files()
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 61, in refetch_files
+    raise e
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 54, in refetch_files
+    files = [f"{f}{self.extension}" for f in in_files if f"{f}_annotated" not in out_files]
+                                             ^^^^^^^^
+UnboundLocalError: cannot access local variable 'in_files' where it is not associated with a value
+[2024-07-16 16:24:25,557]-(Line 20 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:ERROR} : Error changing directory: change_directory() takes 0 positional arguments but 1 was given
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py", line 16, in change
+    change_directory(app)
+TypeError: change_directory() takes 0 positional arguments but 1 was given
+[2024-07-16 16:46:49,089]-(Line 143 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:ERROR} : An error occurred during file setup: cannot access local variable 'in_path' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 141, in file_setup
+    return in_path, out_path, files
+           ^^^^^^^
+UnboundLocalError: cannot access local variable 'in_path' where it is not associated with a value
+[2024-07-16 17:00:40,283]-(Line 38 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:ERROR} : Error during annotation for file: timer.mp4: 'list' object cannot be interpreted as an integer
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py", line 32, in annotate
+    player = VideoPlayer(app, file_name, done_event=done_event)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\player.py", line 70, in __init__
+    self._data = Data(
+                 ^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\data.py", line 34, in __init__
+    self.print_data_object_info(name, in_path, out_path, fps, fc, frame_width, frame_height, sample_rate, channels, log=True)
+  File "D:\Code\Research\Trusted Datasets\annotater\data.py", line 84, in print_data_object_info
+    for row in range(1, table_data): _str += "| " + row[0] + " ==> " + row[0] + " | "
+               ^^^^^^^^^^^^^^^^^^^^
+TypeError: 'list' object cannot be interpreted as an integer
+[2024-07-16 17:05:54,627]-(Line 38 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:ERROR} : Error during annotation for file: timer.mp4: 'int' object is not subscriptable
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py", line 32, in annotate
+    player = VideoPlayer(app, file_name, done_event=done_event)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\player.py", line 70, in __init__
+    self._data = Data(
+                 ^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\data.py", line 34, in __init__
+    self.print_data_object_info(name, in_path, out_path, fps, fc, frame_width, frame_height, sample_rate, channels, log=True)
+  File "D:\Code\Research\Trusted Datasets\annotater\data.py", line 84, in print_data_object_info
+    for row in range(1, len(table_data)): _str += "| " + row[0] + " ==> " + row[0] + " | "
+                                                         ~~~^^^
+TypeError: 'int' object is not subscriptable
+[2024-07-16 17:07:17,170]-(Line 38 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:ERROR} : Error during annotation for file: timer.mp4: can only concatenate str (not "int") to str
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py", line 32, in annotate
+    player = VideoPlayer(app, file_name, done_event=done_event)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\player.py", line 70, in __init__
+    self._data = Data(
+                 ^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\data.py", line 34, in __init__
+    self.print_data_object_info(name, in_path, out_path, fps, fc, frame_width, frame_height, sample_rate, channels, log=True)
+  File "D:\Code\Research\Trusted Datasets\annotater\data.py", line 84, in print_data_object_info
+    for row in range(1, len(table_data)): _str += "| " + table_data[row][0] + " ==> " + table_data[row][1] + " | "
+                                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: can only concatenate str (not "int") to str
