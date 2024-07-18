@@ -30,6 +30,9 @@ class Splash(ctk.CTkToplevel):
         self.root = root
         self.protocol("WM_DELETE_WINDOW", self.root.deiconify)
         logger.debug("Initializing Splash screen")
+
+        # Set the size of the splash screen
+        self.base_width, self.base_height = 350, 350
         
         self.create_splash()
         self.update_countdown(counter)
@@ -39,7 +42,7 @@ class Splash(ctk.CTkToplevel):
         self.title("Loading...")
 
         # Center the splash screen
-        (mid_x, mid_y), (self.window_width, self.window_height), _ = align_window(self, 350, 350)
+        (mid_x, mid_y), (self.window_width, self.window_height), _ = align_window(self, self.base_width, self.base_height)
 
         self.resizable(False, False)
 
@@ -83,10 +86,7 @@ class Splash(ctk.CTkToplevel):
             img = Image.open(image_path)
             img_width, img_height = img.size
             logger.debug(f"Original Image Size: {img_width}x{img_height}")
-            print(f"Window Size: {self.window_width}x{self.window_height}")
-            print(f"Window Size: {self.winfo_width()}x{self.winfo_width()}")
-            scaling_factor = min(self.winfo_width() / img_width, self.winfo_height() / img_height)
-            print(f"Scaling Factor: {scaling_factor}")
+            scaling_factor = min(self.base_width / img_width, self.base_height / img_height)
             new_width = int(img_width * scaling_factor)
             new_height = int(img_height * scaling_factor)
             img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
