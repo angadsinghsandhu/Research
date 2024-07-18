@@ -2457,3 +2457,58 @@ app - INFO - Refetched files: []
 app - INFO - Annotation completed for file: timer.mp4
 app - INFO - Destroying SaveProgress window
 app - INFO - Main application loop started
+app - INFO - 'Loading...' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (438, 438) | position (right, top) : (741.0, 321.0)
+app - INFO - Creating annotater
+app - INFO - Countdown finished, destroying splash screen, showing main window
+app - INFO - 'Annotater' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (875, 250) | position (right, top) : (522.5, 415.0)
+app - INFO - Starting file setup
+app - INFO - Found 2 MP4 files in the input directory
+app - INFO - Config updated with in_path=D:/Code/Research/Trusted Datasets/annotater/data, out_path=D:/Code/Research/Trusted Datasets/annotater/out
+app - INFO - Refetched files: []
+app - INFO - File setup completed
+app - INFO - Annotater UI setup completed
+app - INFO - 'Loading...' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (438, 438) | position (right, top) : (741.0, 321.0)
+app - INFO - Creating annotater
+app - INFO - Countdown finished, destroying splash screen, showing main window
+app - INFO - 'Annotater' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (875, 250) | position (right, top) : (522.5, 415.0)
+app - INFO - Starting file setup
+app - INFO - Found 2 MP4 files in the input directory
+app - INFO - Config updated with in_path=data, out_path=out
+app - INFO - Refetched files: []
+app - INFO - File setup completed
+app - INFO - Annotater UI setup completed
+app - INFO - Main application loop started
+app - INFO - 'Loading...' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (438, 438) | position (right, top) : (741.0, 321.0)
+app - INFO - 'Loading...' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (438, 438) | position (right, top) : (741.0, 321.0)
+app - INFO - Creating annotater
+app - INFO - Countdown finished, destroying splash screen, showing main window
+app - INFO - 'Annotater' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (875, 250) | position (right, top) : (522.5, 415.0)
+app - INFO - Starting file setup
+app - INFO - Found 2 MP4 files in the input directory
+app - INFO - Config updated with in_path=data, out_path=out
+app - INFO - Refetched files: []
+app - INFO - File setup completed
+app - INFO - Annotater UI setup completed
+app - INFO - Main application loop started
+app - INFO - 'Loading...' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (438, 438) | position (right, top) : (741.0, 321.0)
+app - INFO - Creating annotater
+app - INFO - Countdown finished, destroying splash screen, showing main window
+app - INFO - 'Annotater' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (875, 250) | position (right, top) : (522.5, 415.0)
+app - INFO - Starting file setup
+app - INFO - Found 2 MP4 files in the input directory
+app - INFO - Config updated with in_path=data, out_path=out
+app - INFO - Refetched files: []
+app - INFO - File setup completed
+app - INFO - Annotater UI setup completed
+app - INFO - Main application loop started
+app - INFO - 'Loading...' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (438, 438) | position (right, top) : (741.0, 321.0)
+app - INFO - Creating annotater
+app - INFO - Countdown finished, destroying splash screen, showing main window
+app - INFO - 'Annotater' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (875, 250) | position (right, top) : (522.5, 415.0)
+app - INFO - Starting file setup
+app - INFO - Found 2 MP4 files in the input directory
+app - INFO - Config updated with in_path=data, out_path=out
+app - INFO - Refetched files: []
+app - INFO - File setup completed
+app - INFO - Annotater UI setup completed
+app - INFO - Main application loop started

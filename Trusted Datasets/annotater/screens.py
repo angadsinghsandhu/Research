@@ -52,36 +52,46 @@ class Splash(ctk.CTkToplevel):
 
         # Load and resize the image
         self.image_path = "./imgs/jhu.png"
-        self.max_image_width = self.window_width - 40  # Max width for the image with padding
-        self.max_image_height = self.window_height // 2  # Max height for the image
+        img = self.load_and_resize_image(self.image_path)
 
-        if os.path.exists(self.image_path):
-            img = Image.open(self.image_path)
+        # Create widgets
+        self.image_label = ctk.CTkLabel(self, image=img, text="")
+        self.label = ctk.CTkLabel(self, text="Welcome to the Annotater Application", font=("Arial", 16))
+        self.countdown_label = ctk.CTkLabel(self, text="Closing in 3 seconds", font=("Courier", 12))
+
+        # Grid configuration
+        self.grid_columnconfigure(0, weight=1)  # Make the column grow with the window
+        self.grid_rowconfigure(0, weight=1)  # Image label row
+        self.grid_rowconfigure(1, weight=0)  # Text label row
+        self.grid_rowconfigure(2, weight=0)  # Countdown label row
+
+        # Place widgets using grid
+        self.image_label.grid(row=0, column=0, sticky="nsew", pady=20)
+        self.label.grid(row=1, column=0, sticky="ew")
+        self.countdown_label.grid(row=2, column=0, sticky="ew")
+
+        logger.debug("Splash screen layout created with grid")
+
+    def load_and_resize_image(self, image_path):
+        """
+        Loads and resizes an image to fit the application window.
+        
+        Args:
+            image_path (str): Path to the image file.
+        """
+        if os.path.exists(image_path):
+            img = Image.open(image_path)
             img_width, img_height = img.size
             logger.debug(f"Original Image Size: {img_width}x{img_height}")
-
-            # Scale down the image if it is too big
-            if img_width > self.max_image_width or img_height > self.max_image_height:
-                scaling_factor = min(self.max_image_width / img_width, self.max_image_height / img_height)
-                new_width = int(img_width * scaling_factor)
-                new_height = int(img_height * scaling_factor)
-                img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
-                logger.debug(f"Resized Image Size: {new_width}x{new_height}")
-
-            img_ctk = ctk.CTkImage(img, size=(img.width, img.height))  # Convert to CTkImage
-            self.image_label = ctk.CTkLabel(self, text="", image=img_ctk)  # Create and place the image label
-            self.image_label.pack(pady=20)
+            scaling_factor = min(self.winfo_width() / img_width, self.winfo_height() / img_height)
+            new_width = int(img_width * scaling_factor)
+            new_height = int(img_height * scaling_factor)
+            img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+            logger.debug(f"Resized Image Size: {new_width}x{new_height}")
+            return ctk.CTkImage(img, size=(new_width, new_height))
         else:
-            logger.error(f"Splash image not found: {self.image_path}")
-
-        # Create and place the text label
-        self.label = ctk.CTkLabel(self, text="Welcome to the Annotater Application", font=("Arial", 16))
-        self.label.pack(pady=10)
-
-        self.countdown_label = ctk.CTkLabel(self, text="Closing in 3 seconds", font=("Courier", 12))
-        self.countdown_label.pack(pady=10)
-
-        logger.debug("Splash screen layout created")
+            logger.error(f"Splash image not found: {image_path}")
+            return None
 
     def update_countdown(self, count):
         """
