@@ -96,7 +96,7 @@ This command packages the application into a single executable file named `Annot
 Use the following command to build the application with required non-py files (images, yaml, etc.):
 
 ```bash
-pyinstaller main.msc
+pyinstaller Annotater.spec
 ```
 
 ## License
