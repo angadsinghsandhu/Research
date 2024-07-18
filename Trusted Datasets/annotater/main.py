@@ -15,7 +15,6 @@ from annotater.anno import create_annotater
 
 # TODO : Create Executable
 # TODO : create documentation
-# TODO : test Surface audio signal
 # TODO : test annotations recorded 240p and recoreded in 1080p, scaled down to 240p
 
 # Set DPI Awareness for Windows 10

@@ -136,7 +136,7 @@ class Config:
         logger.info("Starting file setup")
 
         try:
-            if not self.cwd: self.cwd = filedialog.askdirectory(title="Select Root Directory", initialdir=self.convert_to_unix_style("D:/Documents"))
+            if not self.cwd: self.cwd = filedialog.askdirectory(title="Select Root Directory", initialdir=self.convert_to_unix_style(os.path.join(os.path.expanduser('~'), 'Videos')))
             logger.debug(f"Current working directory: {self.cwd}")
             
             # Select Input Video Directory

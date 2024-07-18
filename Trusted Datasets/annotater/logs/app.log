@@ -12909,3 +12909,34 @@ AttributeError: 'AnnotatedPlayer' object has no attribute 'player'
 [2024-07-18 04:07:25,433]-(Line 114 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Config updated with in_path=D:/Code/Research/Trusted Datasets/annotater/data, out_path=D:/Code/Research/Trusted Datasets/annotater/out
 [2024-07-18 04:07:25,434]-(Line 237 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Refetched files: []
 [2024-07-18 04:07:25,436]-(Line 73 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Annotation completed for file: zhusky.mp4
+[2024-07-18 04:31:07,159]-(Line 235 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:INFO} : Destroying SaveProgress window
+[2024-07-18 04:31:07,923]-(Line 238 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Main window deiconified
+[2024-07-18 04:31:09,845]-(Line 159 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Main application loop started
+[2024-07-18 04:36:02,170]-(Line 32 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Initializing Splash screen
+[2024-07-18 04:36:02,345]-(Line 82 at D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py)-{app:INFO} : 'Loading...' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (438, 375) | position (right, top) : (741.0, 352.5)
+[2024-07-18 04:36:02,611]-(Line 54 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Splash screen centered at position: 732, 314
+[2024-07-18 04:36:02,652]-(Line 88 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Original Image Size: 1330x855
+[2024-07-18 04:36:02,698]-(Line 93 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Resized Image Size: 350x225
+[2024-07-18 04:36:02,842]-(Line 76 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Splash screen layout created with grid
+[2024-07-18 04:36:02,844]-(Line 108 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Countdown updated to 4 seconds
+[2024-07-18 04:36:02,845]-(Line 99 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Creating annotater
+[2024-07-18 04:36:02,850]-(Line 106 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:DEBUG} : Default styling options set
+[2024-07-18 04:36:03,937]-(Line 108 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Countdown updated to 3 seconds
+[2024-07-18 04:36:04,968]-(Line 108 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Countdown updated to 2 seconds
+[2024-07-18 04:36:05,995]-(Line 108 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Countdown updated to 1 seconds
+[2024-07-18 04:36:07,199]-(Line 117 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:INFO} : Countdown finished, destroying splash screen, showing main window
+[2024-07-18 04:36:07,409]-(Line 82 at D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py)-{app:INFO} : 'Annotater' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (875, 250) | position (right, top) : (522.5, 415.0)
+[2024-07-18 04:36:07,730]-(Line 136 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Starting file setup
+[2024-07-18 04:36:12,504]-(Line 44 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Setting Current Working Directory: 
+[2024-07-18 04:36:12,504]-(Line 140 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Current working directory: .
+[2024-07-18 04:36:12,505]-(Line 53 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Setting input folder path to: ./data
+[2024-07-18 04:36:12,505]-(Line 149 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Default input directory used: data
+[2024-07-18 04:36:12,506]-(Line 62 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Setting output folder path to: ./out
+[2024-07-18 04:36:12,507]-(Line 158 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Default output directory used: out
+[2024-07-18 04:36:12,507]-(Line 162 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Found 2 MP4 files in the input directory
+[2024-07-18 04:36:12,508]-(Line 230 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Removing extensions from files and filtering
+[2024-07-18 04:36:12,509]-(Line 114 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Config updated with in_path=data, out_path=out
+[2024-07-18 04:36:12,510]-(Line 237 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Refetched files: []
+[2024-07-18 04:36:12,510]-(Line 115 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : File setup completed
+[2024-07-18 04:36:12,554]-(Line 155 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Annotater UI setup completed
+[2024-07-18 04:36:13,682]-(Line 159 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Main application loop started
