@@ -7,11 +7,11 @@ annotating videos, and watching annotated videos in the video annotation tool ap
 
 # General Imports
 import threading, logging
-import customtkinter as ctk
+import customtkinter as ctk, os
 from tkinter import filedialog
 
 # Local Imports
-from annotater.setup import align_window
+from annotater.setup import align_window, resource_path
 from annotater.player import VideoPlayer, AnnotatedPlayer
 from config import config
 
@@ -98,7 +98,16 @@ def create_annotater(app):
     """
     logger.info("Creating annotater")
     try:
-        app.iconbitmap("./imgs/tool.ico")
+        # check if file exists
+        if os.path.exists("./imgs/tool.ico"):
+            app.iconbitmap("./imgs/tool.ico")
+            logger.debug("Icon set from local file")
+        elif os.path.exists(resource_path("./imgs/tool.ico")):
+            app.iconbitmap(resource_path("./imgs/tool.ico"))
+            logger.debug("Icon set from resource path")
+        elif os.path.exists(os.path.join(os.path.expanduser('~'), 'Dektop', 'App', 'imgs', 'tool.ico')):
+            app.iconbitmap(os.path.join(os.path.expanduser('~'), 'Dektop', 'App', 'imgs', 'tool.ico'))
+            logger.debug("Icon set from desktop path")
 
         # add default styling options
         ctk.set_default_color_theme("dark-blue")  # Set the default color theme

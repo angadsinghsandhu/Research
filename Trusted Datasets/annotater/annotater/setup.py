@@ -6,7 +6,7 @@ based on the screen dimensions.
 """
 
 # General Imports
-import logging
+import logging, sys, os
 
 # Set up logging
 logger = logging.getLogger('app')
@@ -82,3 +82,8 @@ def align_window(app, window_width: float = DEFAULT_WINDOW_WIDTH, window_height:
     logger.info(f"'{app.title()}' App Dimentions ==> Screen (Width, Height) : ({screen_width}, {screen_height}) | Window (Width, Height) : ({window_width}, {window_height}) | position (right, top) : ({position_right}, {position_top})")
 
     return (mid_x, mid_y), (int(window_width), int(window_height)), (int(screen_width), int(screen_height))
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)

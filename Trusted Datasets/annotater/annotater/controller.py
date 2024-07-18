@@ -69,9 +69,9 @@ class ControlWindow(ctk.CTkToplevel):
 
     def toggle_pause(self):
         """Toggle the pause state of the video."""
-        self.play_pause_button.configure(text="▶" if self.video_player.paused else "▐▐")
-        self.add_to_queue('pause')
+        self.play_pause_button.configure(text="▐▐" if self.video_player.paused else "▶")
         logger.info(f"Toggled pause state to {not self.video_player.paused}")
+        self.add_to_queue('pause')
 
     def seek(self, value):
         """
