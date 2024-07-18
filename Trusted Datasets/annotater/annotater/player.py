@@ -271,7 +271,7 @@ class VideoPlayer:
         self._data.clean()
         self._data.update_max_frames(int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT)))
         self._data.update(
-            in_path=self.file_path, out_path=self.out_path,
+            in_path=config.in_path, out_path=config.out_path,
             name=self.file_name, 
             frame_width=int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH)), 
             frame_height=int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), 

@@ -2522,3 +2522,37 @@ app - INFO - Config updated with in_path=data, out_path=out
 app - INFO - Refetched files: []
 app - INFO - File setup completed
 app - INFO - Annotater UI setup completed
+app - INFO - 'Loading...' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (438, 438) | position (right, top) : (741.0, 321.0)
+app - INFO - Creating annotater
+app - INFO - Countdown finished, destroying splash screen, showing main window
+app - INFO - 'Annotater' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (875, 250) | position (right, top) : (522.5, 415.0)
+app - INFO - Starting file setup
+app - INFO - Found 2 MP4 files in the input directory
+app - INFO - Config updated with in_path=D:/Code/Research/Trusted Datasets/annotater/data, out_path=D:/Code/Research/Trusted Datasets/annotater/out
+app - INFO - Refetched files: []
+app - INFO - File setup completed
+app - INFO - Annotater UI setup completed
+app - INFO - Config updated with in_path=D:/Code/Research/Trusted Datasets/annotater/data, out_path=D:/Code/Research/Trusted Datasets/annotater/out
+app - INFO - Refetched files: []
+app - INFO - File list refreshed successfully
+app - INFO - Config updated with in_path=D:/Code/Research/Trusted Datasets/annotater/data, out_path=D:/Code/Research/Trusted Datasets/annotater/out
+app - INFO - Refetched files: ['zhusky.mp4']
+app - INFO - File list refreshed successfully
+app - INFO - Starting annotation for file: zhusky.mp4
+app - INFO - Data object for zhusky.mp4 initialized
+app - INFO - 'Video Controls: zhusky.mp4' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (1212, 62) | position (right, top) : (0, 1018)
+app - INFO - Control window configuration completed for file: zhusky.mp4
+app - INFO - VideoPlayer initialized with frame delay: 33 ms
+app - INFO - Video processing completed
+app - INFO - Saving data for zhusky.mp4 to D:/Code/Research/Trusted Datasets/annotater/out
+app - INFO - Video data processed and saved to D:/Code/Research/Trusted Datasets/annotater/out\zhusky.mp4
+app - INFO - Audio data saved to D:/Code/Research/Trusted Datasets/annotater/out\zhusky.wav
+app - INFO - Audio and video merged and saved to D:/Code/Research/Trusted Datasets/annotater/out\zhusky_annotated.mp4
+app - INFO - Annotations saved to D:/Code/Research/Trusted Datasets/annotater/out\zhusky_annotated.json
+app - INFO - Annotations saved for zhusky.mp4
+app - INFO - Data for zhusky.mp4 saved successfully
+app - INFO - VideoPlayer closed
+app - INFO - Saved and closed the video player
+app - INFO - Config updated with in_path=D:/Code/Research/Trusted Datasets/annotater/data, out_path=D:/Code/Research/Trusted Datasets/annotater/out
+app - INFO - Refetched files: []
+app - INFO - Annotation completed for file: zhusky.mp4

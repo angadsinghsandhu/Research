@@ -12784,3 +12784,128 @@ AttributeError: 'AnnotatedPlayer' object has no attribute 'player'
 [2024-07-18 03:43:27,590]-(Line 237 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Refetched files: []
 [2024-07-18 03:43:27,591]-(Line 115 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : File setup completed
 [2024-07-18 03:43:27,630]-(Line 155 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Annotater UI setup completed
+[2024-07-18 04:06:11,807]-(Line 32 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Initializing Splash screen
+[2024-07-18 04:06:12,022]-(Line 82 at D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py)-{app:INFO} : 'Loading...' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (438, 438) | position (right, top) : (741.0, 321.0)
+[2024-07-18 04:06:12,212]-(Line 54 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Splash screen centered at position: 732, 283
+[2024-07-18 04:06:12,222]-(Line 88 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Original Image Size: 1330x855
+[2024-07-18 04:06:12,270]-(Line 93 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Resized Image Size: 350x225
+[2024-07-18 04:06:12,379]-(Line 76 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Splash screen layout created with grid
+[2024-07-18 04:06:12,380]-(Line 108 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Countdown updated to 4 seconds
+[2024-07-18 04:06:12,380]-(Line 99 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Creating annotater
+[2024-07-18 04:06:12,384]-(Line 106 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:DEBUG} : Default styling options set
+[2024-07-18 04:06:13,394]-(Line 108 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Countdown updated to 3 seconds
+[2024-07-18 04:06:14,411]-(Line 108 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Countdown updated to 2 seconds
+[2024-07-18 04:06:15,425]-(Line 108 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Countdown updated to 1 seconds
+[2024-07-18 04:06:16,604]-(Line 117 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:INFO} : Countdown finished, destroying splash screen, showing main window
+[2024-07-18 04:06:16,808]-(Line 82 at D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py)-{app:INFO} : 'Annotater' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (875, 250) | position (right, top) : (522.5, 415.0)
+[2024-07-18 04:06:17,223]-(Line 136 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Starting file setup
+[2024-07-18 04:06:22,082]-(Line 44 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Setting Current Working Directory: D:/Code/Research/Trusted Datasets/annotater
+[2024-07-18 04:06:22,083]-(Line 140 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Current working directory: D:/Code/Research/Trusted Datasets/annotater
+[2024-07-18 04:06:22,084]-(Line 53 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Setting input folder path to: D:/Code/Research/Trusted Datasets/annotater/data
+[2024-07-18 04:06:22,084]-(Line 149 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Default input directory used: D:/Code/Research/Trusted Datasets/annotater/data
+[2024-07-18 04:06:22,085]-(Line 62 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Setting output folder path to: D:/Code/Research/Trusted Datasets/annotater/out
+[2024-07-18 04:06:22,086]-(Line 158 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Default output directory used: D:/Code/Research/Trusted Datasets/annotater/out
+[2024-07-18 04:06:22,087]-(Line 162 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Found 2 MP4 files in the input directory
+[2024-07-18 04:06:22,088]-(Line 230 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Removing extensions from files and filtering
+[2024-07-18 04:06:22,089]-(Line 114 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Config updated with in_path=D:/Code/Research/Trusted Datasets/annotater/data, out_path=D:/Code/Research/Trusted Datasets/annotater/out
+[2024-07-18 04:06:22,091]-(Line 237 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Refetched files: []
+[2024-07-18 04:06:22,092]-(Line 115 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : File setup completed
+[2024-07-18 04:06:22,136]-(Line 155 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Annotater UI setup completed
+[2024-07-18 04:06:28,802]-(Line 230 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Removing extensions from files and filtering
+[2024-07-18 04:06:28,803]-(Line 114 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Config updated with in_path=D:/Code/Research/Trusted Datasets/annotater/data, out_path=D:/Code/Research/Trusted Datasets/annotater/out
+[2024-07-18 04:06:28,805]-(Line 237 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Refetched files: []
+[2024-07-18 04:06:28,806]-(Line 48 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : File list refreshed successfully
+[2024-07-18 04:07:09,570]-(Line 230 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Removing extensions from files and filtering
+[2024-07-18 04:07:09,572]-(Line 114 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Config updated with in_path=D:/Code/Research/Trusted Datasets/annotater/data, out_path=D:/Code/Research/Trusted Datasets/annotater/out
+[2024-07-18 04:07:09,573]-(Line 237 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Refetched files: ['zhusky.mp4']
+[2024-07-18 04:07:09,574]-(Line 48 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : File list refreshed successfully
+[2024-07-18 04:07:10,170]-(Line 65 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Starting annotation for file: zhusky.mp4
+[2024-07-18 04:07:10,360]-(Line 91 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : | Data Object Created for ==> zhusky.mp4 | Input Path ==> D:/Code/Research/Trusted Datasets/annotater/data | Output Path ==> D:/Code/Research/Trusted Datasets/annotater/out | Name ==> zhusky.mp4 | FPS ==> 30 | Frame Count ==> 10225 | Frame Width ==> 640 | Frame Height ==> 360 | Sample Rate ==> 44100 | Channels ==> 2 |
+[2024-07-18 04:07:10,372]-(Line 69 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Data object for zhusky.mp4 initialized
+[2024-07-18 04:07:10,858]-(Line 82 at D:\Code\Research\Trusted Datasets\annotater\annotater\setup.py)-{app:INFO} : 'Video Controls: zhusky.mp4' App Dimentions ==> Screen (Width, Height) : (1920, 1080) | Window (Width, Height) : (1212, 62) | position (right, top) : (0, 1018)
+[2024-07-18 04:07:10,861]-(Line 58 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Control window configuration completed for file: zhusky.mp4
+[2024-07-18 04:07:10,873]-(Line 111 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:INFO} : VideoPlayer initialized with frame delay: 33 ms
+[2024-07-18 04:07:12,248]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 35 with command start
+[2024-07-18 04:07:12,249]-(Line 143 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Started drawing annotation at: (187, 105)
+[2024-07-18 04:07:12,249]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 35 with command move
+[2024-07-18 04:07:12,280]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,282]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 36 with command move
+[2024-07-18 04:07:12,323]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,325]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 37 with command move
+[2024-07-18 04:07:12,326]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 37 with command move
+[2024-07-18 04:07:12,345]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,346]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 38 with command move
+[2024-07-18 04:07:12,348]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 38 with command move
+[2024-07-18 04:07:12,381]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,382]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 39 with command move
+[2024-07-18 04:07:12,413]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,415]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 40 with command move
+[2024-07-18 04:07:12,448]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,449]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 41 with command move
+[2024-07-18 04:07:12,451]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 41 with command move
+[2024-07-18 04:07:12,481]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,483]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 42 with command move
+[2024-07-18 04:07:12,514]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,516]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 43 with command move
+[2024-07-18 04:07:12,551]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,552]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 44 with command move
+[2024-07-18 04:07:12,584]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,585]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 45 with command move
+[2024-07-18 04:07:12,616]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,617]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 46 with command move
+[2024-07-18 04:07:12,650]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,651]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 47 with command move
+[2024-07-18 04:07:12,652]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 47 with command move
+[2024-07-18 04:07:12,685]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,686]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 48 with command move
+[2024-07-18 04:07:12,719]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,720]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 49 with command move
+[2024-07-18 04:07:12,753]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,754]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 50 with command move
+[2024-07-18 04:07:12,755]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 50 with command move
+[2024-07-18 04:07:12,785]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,787]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 51 with command move
+[2024-07-18 04:07:12,819]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,820]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 52 with command move
+[2024-07-18 04:07:12,853]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,854]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 53 with command move
+[2024-07-18 04:07:12,889]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,891]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 54 with command move
+[2024-07-18 04:07:12,921]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,922]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 55 with command move
+[2024-07-18 04:07:12,953]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,955]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 56 with command move
+[2024-07-18 04:07:12,990]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:12,992]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 57 with command move
+[2024-07-18 04:07:13,023]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:13,025]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 58 with command move
+[2024-07-18 04:07:13,056]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:13,057]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 59 with command move
+[2024-07-18 04:07:13,088]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:13,090]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 60 with command move
+[2024-07-18 04:07:13,123]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:13,124]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 61 with command move
+[2024-07-18 04:07:13,157]-(Line 172 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Annotations drawn on frame
+[2024-07-18 04:07:13,158]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 62 with command move
+[2024-07-18 04:07:13,162]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Added annotation at frame 62 with command end
+[2024-07-18 04:07:13,163]-(Line 149 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:DEBUG} : Ended drawing annotation at: (286, 120)
+[2024-07-18 04:07:13,960]-(Line 246 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:INFO} : Video processing completed
+[2024-07-18 04:07:13,964]-(Line 501 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Saving data for zhusky.mp4 to D:/Code/Research/Trusted Datasets/annotater/out
+[2024-07-18 04:07:14,017]-(Line 131 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Initializing SaveProgress window for zhusky.mp4
+[2024-07-18 04:07:14,100]-(Line 231 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : Progress bars reset for zhusky.mp4
+[2024-07-18 04:07:14,101]-(Line 176 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:DEBUG} : SaveProgress window layout created
+[2024-07-18 04:07:24,151]-(Line 417 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Video data processed and saved to D:/Code/Research/Trusted Datasets/annotater/out\zhusky.mp4
+[2024-07-18 04:07:24,903]-(Line 355 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Combined audio data successfully
+[2024-07-18 04:07:24,911]-(Line 429 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Audio data saved to D:/Code/Research/Trusted Datasets/annotater/out\zhusky.wav
+[2024-07-18 04:07:25,339]-(Line 455 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Audio and video merged and saved to D:/Code/Research/Trusted Datasets/annotater/out\zhusky_annotated.mp4
+[2024-07-18 04:07:25,341]-(Line 460 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Deleted temporary video file D:/Code/Research/Trusted Datasets/annotater/out\zhusky.mp4
+[2024-07-18 04:07:25,342]-(Line 463 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:DEBUG} : Deleted temporary audio file D:/Code/Research/Trusted Datasets/annotater/out\zhusky.wav
+[2024-07-18 04:07:25,352]-(Line 488 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Annotations saved to D:/Code/Research/Trusted Datasets/annotater/out\zhusky_annotated.json
+[2024-07-18 04:07:25,353]-(Line 181 at D:\Code\Research\Trusted Datasets\annotater\screens.py)-{app:INFO} : Annotations saved for zhusky.mp4
+[2024-07-18 04:07:25,355]-(Line 514 at D:\Code\Research\Trusted Datasets\annotater\data.py)-{app:INFO} : Data for zhusky.mp4 saved successfully
+[2024-07-18 04:07:25,412]-(Line 311 at D:\Code\Research\Trusted Datasets\annotater\annotater\player.py)-{app:INFO} : VideoPlayer closed
+[2024-07-18 04:07:25,430]-(Line 99 at D:\Code\Research\Trusted Datasets\annotater\annotater\controller.py)-{app:INFO} : Saved and closed the video player
+[2024-07-18 04:07:25,431]-(Line 230 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:DEBUG} : Removing extensions from files and filtering
+[2024-07-18 04:07:25,433]-(Line 114 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Config updated with in_path=D:/Code/Research/Trusted Datasets/annotater/data, out_path=D:/Code/Research/Trusted Datasets/annotater/out
+[2024-07-18 04:07:25,434]-(Line 237 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:INFO} : Refetched files: []
+[2024-07-18 04:07:25,436]-(Line 73 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:INFO} : Annotation completed for file: zhusky.mp4

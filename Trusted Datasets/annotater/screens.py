@@ -32,7 +32,7 @@ class Splash(ctk.CTkToplevel):
         logger.debug("Initializing Splash screen")
 
         # Set the size of the splash screen
-        self.base_width, self.base_height = 350, 350
+        self.base_width, self.base_height = 350, 300
         
         self.create_splash()
         self.update_countdown(counter)
