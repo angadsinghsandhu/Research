@@ -83,7 +83,10 @@ class Splash(ctk.CTkToplevel):
             img = Image.open(image_path)
             img_width, img_height = img.size
             logger.debug(f"Original Image Size: {img_width}x{img_height}")
+            print(f"Window Size: {self.window_width}x{self.window_height}")
+            print(f"Window Size: {self.winfo_width()}x{self.winfo_width()}")
             scaling_factor = min(self.winfo_width() / img_width, self.winfo_height() / img_height)
+            print(f"Scaling Factor: {scaling_factor}")
             new_width = int(img_width * scaling_factor)
             new_height = int(img_height * scaling_factor)
             img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
