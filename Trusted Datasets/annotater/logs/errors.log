@@ -135,3 +135,61 @@ Traceback (most recent call last):
     for row in range(1, len(table_data)): _str += "| " + table_data[row][0] + " ==> " + table_data[row][1] + " | "
                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
 TypeError: can only concatenate str (not "int") to str
+[2024-07-16 19:37:16,482]-(Line 121 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:ERROR} : An error occurred during annotater creation: cannot use geometry manager pack inside . which already has slaves managed by grid
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py", line 93, in create_annotater
+    refresh_button.pack(pady=20)
+  File "C:\Users\angad\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\customtkinter\windows\widgets\core_widget_classes\ctk_base_class.py", line 298, in pack
+    return super().pack(**self._apply_argument_scaling(kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\Lib\tkinter\__init__.py", line 2471, in pack_configure
+    self.tk.call(
+_tkinter.TclError: cannot use geometry manager pack inside . which already has slaves managed by grid
+[2024-07-16 20:56:36,948]-(Line 46 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:ERROR} : Error refreshing file list: 'dict' object has no attribute 'configure'
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py", line 43, in refresh
+    current_file_label.configure(text=f"Current File to be Annotated: {config.fetch_top_file}")
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'dict' object has no attribute 'configure'
+[2024-07-16 21:29:07,727]-(Line 143 at D:\Code\Research\Trusted Datasets\annotater\config.py)-{app:ERROR} : An error occurred during file setup: Config.convert_to_unix_style() takes 1 positional argument but 2 were given
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 110, in file_setup
+    if not self.cwd: self.cwd = os.getcwd()
+                     ^^^^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\config.py", line 59, in cwd
+    self._cwd = self.convert_to_unix_style(value)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Config.convert_to_unix_style() takes 1 positional argument but 2 were given
+[2024-07-17 16:23:40,483]-(Line 61 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:ERROR} : Error during watching: ModPlug_Load failed
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py", line 57, in watch
+    annoPlayer = AnnotatedPlayer(watch_file, meta_file)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\player.py", line 305, in __init__
+    mixer.music.load(watch_file)
+pygame.error: ModPlug_Load failed
+[2024-07-17 16:29:24,978]-(Line 61 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:ERROR} : Error during watching: [WinError 32] The process cannot access the file because it is being used by another process: 'temp.mp3'
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py", line 57, in watch
+    annoPlayer = AnnotatedPlayer(watch_file, meta_file)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\player.py", line 319, in __init__
+    self.show()
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\player.py", line 359, in show
+    self.close()
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\player.py", line 365, in close
+    os.remove("temp.mp3")
+PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'temp.mp3'
+[2024-07-17 16:33:47,800]-(Line 61 at D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py)-{app:ERROR} : Error during watching: 'AnnotatedPlayer' object has no attribute 'player'
+Traceback (most recent call last):
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\anno.py", line 57, in watch
+    annoPlayer = AnnotatedPlayer(watch_file, meta_file)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\player.py", line 319, in __init__
+    self.show()
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\player.py", line 359, in show
+    self.close()
+  File "D:\Code\Research\Trusted Datasets\annotater\annotater\player.py", line 367, in close
+    self.player.close_player()
+    ^^^^^^^^^^^
+AttributeError: 'AnnotatedPlayer' object has no attribute 'player'
