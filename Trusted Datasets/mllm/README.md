@@ -1,16 +1,17 @@
-# CLSP project
+# Multimodal Large Language Models for Healthcare
 
 ## Introduction
 
-This project is a simple implementation of a simple web server using the `http` module in Node.js. The server is able to handle GET and POST requests, and is able to serve static files. The server is also able to handle requests for a simple REST API.
+This project aims to explore the use of multimodal large language models (LLMs) in healthcare. The project will focus on the application of multimodal LLMs in the analysis of cataract surgery videos. The project will involve the use of multimodal LLMs to analyze cataract surgery videos and extract information from the videos. The project will also involve the development of a dataset of cataract surgery videos for training and evaluation of the multimodal LLMs.
 
 ## Metadata
 
-- **Author**: [Ricardo Barona]
-- **Date**: 2024-05-01
-- **Version**: 1.0.0
-- **Status**: Completed
-- **Topic**: Web Server
+- **Author**: [Angad Sandhu]
+- **Date**: 2022-02-14
+- **Keywords**: multimodal LLMs, healthcare, cataract surgery videos
+- **Tags**: multimodal LLMs, healthcare, cataract surgery videos
+- **Categories**: multimodal LLMs, healthcare, cataract surgery videos
+
 
 ## Reading
 
