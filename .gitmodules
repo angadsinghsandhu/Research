@@ -1,3 +1,6 @@
 [submodule "Trusted Datasets/Python-Video-Annotater"]
 	path = Trusted Datasets/Python-Video-Annotater
 	url = https://github.com/angadsinghsandhu/Python-Video-Annotater.git
+[submodule "Trusted Datasets/MLLM"]
+	path = Trusted Datasets/MLLM
+	url = https://github.com/angadsinghsandhu/MLLM.git
