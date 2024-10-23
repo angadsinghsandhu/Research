@@ -4,3 +4,6 @@
 [submodule "Trusted Datasets/MLLM"]
 	path = Trusted Datasets/MLLM
 	url = https://github.com/angadsinghsandhu/MLLM.git
+[submodule "Topic Modeling Trends/trends-demo"]
+	path = Topic Modeling Trends/trends-demo
+	url = https://github.com/angadsinghsandhu/trends-demo.git
