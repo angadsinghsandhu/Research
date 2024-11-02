@@ -17,3 +17,8 @@
 [submodule "Trusted Datasets/nikhil/Surgery-Copilot"]
 	path = Trusted Datasets/nikhil/Surgery-Copilot
 	url = https://github.com/absolute-nil/Surgery-Copilot.git
+
+# [submodule "Trusted Datasets/mllm/code/LLaVA"]
+#     path = Trusted Datasets/mllm/code/LLaVA
+#     url = https://github.com/haotian-liu/LLaVA.git
+
