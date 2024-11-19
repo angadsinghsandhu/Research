@@ -6,10 +6,6 @@
 	path = Trusted Datasets/MLLM
 	url = https://github.com/angadsinghsandhu/MLLM.git
 
-[submodule "Topic Modeling Trends/trends-demo"]
-	path = Topic Modeling Trends/trends-demo
-	url = https://github.com/angadsinghsandhu/trends-demo.git
-
 [submodule "Trusted Datasets/nikhil/FAQt-Score"]
 	path = Trusted Datasets/nikhil/FAQt-Score
 	url = https://github.com/absolute-nil/FAQt-Score.git
@@ -18,7 +14,10 @@
 	path = Trusted Datasets/nikhil/Surgery-Copilot
 	url = https://github.com/absolute-nil/Surgery-Copilot.git
 
-# [submodule "Trusted Datasets/mllm/code/LLaVA"]
-#     path = Trusted Datasets/mllm/code/LLaVA
-#     url = https://github.com/haotian-liu/LLaVA.git
+[submodule "Trusted Datasets/mllm/code/LLaVA"]
+    path = Trusted Datasets/mllm/code/LLaVA
+    url = https://github.com/haotian-liu/LLaVA.git
 
+[submodule "Trusted Datasets/surgery-copilot"]
+	path = Trusted Datasets/surgery-copilot
+	url = https://github.com/JHU-WORK/surgery-copilot.git
