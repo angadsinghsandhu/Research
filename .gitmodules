@@ -22,3 +22,6 @@
 #     path = Trusted Datasets/mllm/code/LLaVA
 #     url = https://github.com/haotian-liu/LLaVA.git
 
+[submodule "Trusted Datasets/surgery-copilot"]
+	path = Trusted Datasets/surgery-copilot
+	url = https://github.com/JHU-WORK/surgery-copilot.git
